@@ -150,6 +150,21 @@ Future Bash helper behavior should follow the Extreme TDD workflow with Bats.
   - [x] `xrt_sims_find_by_name`: finding a simulator by name and runtime
   - [x] `xrt_sims_wait_until_booted`: booting a simulator if needed and
         waiting until it is booted
+  - [ ] `xrt_sims_status`: returning whether a simulator is booted.
+    - [ ] Return an error when the simulator cannot be found.
+    - [ ] Support a quiet mode option that suppresses the not-found error.
+  - [ ] `xrt_sims_delete`: deleting an existing simulator.
+    - [ ] Return an error when the simulator is booted.
+    - [ ] Support a force option that shuts down a booted simulator before
+          deleting it.
+  - [ ] `xrt_sims_create`: creating a simulator.
+    - [ ] Support an option that returns an error when the simulator already
+          exists.
+  - [ ] `xrt_sims_clone`: cloning a source simulator and shutting down the
+        source simulator first if needed.
+    - [ ] Return an error when the destination simulator already exists.
+    - [ ] Support a force option that deletes an existing destination before
+          cloning.
   - [ ] `xrt_sims_boot`: deferred until an async boot-only use case exists
 - [ ] `test/helpers/mock_xcrun.bash`: mock helpers for `xcrun simctl`.
 - [ ] `test/simulators.bats`: failing simulator helper tests.

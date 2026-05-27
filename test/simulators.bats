@@ -68,6 +68,25 @@ assert_xcrun_command_logged() {
   assert_output "Shutdown"
 }
 
+@test "xrt_sims_status does not leak broken pipe diagnostics for early match" {
+  xrt_sims_list_available() {
+    printf '%s\t%s\t%s\n' \
+      "iPhone 17" \
+      "AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE" \
+      "Shutdown"
+    printf '%s\n' "lib/simulators.sh: line 12: printf: write error: Broken pipe" >&2
+    printf '%s\t%s\t%s\n' \
+      "iPhone 17 Pro" \
+      "11111111-2222-3333-4444-555555555555" \
+      "Booted"
+  }
+
+  run xrt_sims_status "AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE"
+
+  assert_success
+  assert_output "Shutdown"
+}
+
 @test "xrt_sims_status fails when simulator udid is not available" {
   setup_default_xcrun_mock
 

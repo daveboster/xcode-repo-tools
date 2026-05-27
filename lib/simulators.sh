@@ -34,6 +34,7 @@ xrt_sims_find_by_name() {
 xrt_sims_status() {
   local quiet=false
   local simulator_udid
+  local simulator_rows
   local simulator_state
 
   if [[ "${1:-}" == "--quiet" ]]; then
@@ -42,7 +43,8 @@ xrt_sims_status() {
   fi
 
   simulator_udid="$1"
-  simulator_state="$(xrt_sims_list_available | awk -F '\t' -v udid="$simulator_udid" '$2 == udid { print $3; exit }')"
+  simulator_rows="$(xrt_sims_list_available 2>&1 | grep -v 'printf: write error: Broken pipe' || true)"
+  simulator_state="$(printf '%s\n' "$simulator_rows" | awk -F '\t' -v udid="$simulator_udid" '$2 == udid { state = $3 } END { if (state != "") print state }')"
 
   if [[ -z "$simulator_state" ]]; then
     if [[ "$quiet" == true ]]; then

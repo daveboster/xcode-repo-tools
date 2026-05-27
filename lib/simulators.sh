@@ -19,6 +19,21 @@ xrt_sims_list_available() {
 
 xrt_sims_find_by_name() {
   local simulator_name="$1"
+  local simulator_row
 
-  xrt_sims_list_available | awk -F '\t' -v name="$simulator_name" '$1 == name'
+  simulator_row="$(xrt_sims_list_available | awk -F '\t' -v name="$simulator_name" '$1 == name')"
+
+  if [[ -z "$simulator_row" ]]; then
+    echo "No available simulator named: $simulator_name" >&2
+    return 1
+  fi
+
+  printf '%s\n' "$simulator_row"
+}
+
+xrt_sims_wait_until_booted() {
+  local simulator_udid="$1"
+
+  xcrun simctl boot "$simulator_udid"
+  xcrun simctl bootstatus "$simulator_udid" -b
 }

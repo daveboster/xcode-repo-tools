@@ -31,3 +31,29 @@ setup() {
   assert_success
   assert_output $'iPhone 17 Pro\t11111111-2222-3333-4444-555555555555\tBooted'
 }
+
+@test "xrt_sims_find_by_name fails when no simulator matches the name" {
+  xrt_mock_xcrun_default_simctl_list_devices_available \
+    "$BATS_TEST_TMPDIR/bin" \
+    "$BATS_TEST_TMPDIR/simctl-devices.txt"
+
+  run xrt_sims_find_by_name "XRT Missing Simulator"
+
+  assert_failure
+  assert_output --partial "No available simulator named: XRT Missing Simulator"
+}
+
+@test "xrt_sims_wait_until_booted boots shutdown simulator and waits for bootstatus" {
+  xrt_mock_xcrun_default_simctl_list_devices_available \
+    "$BATS_TEST_TMPDIR/bin" \
+    "$BATS_TEST_TMPDIR/simctl-devices.txt" \
+    "$BATS_TEST_TMPDIR/xcrun-commands.log"
+
+  run xrt_sims_wait_until_booted "AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE"
+
+  assert_success
+  grep -Fx "simctl boot AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE" \
+    "$BATS_TEST_TMPDIR/xcrun-commands.log"
+  grep -Fx "simctl bootstatus AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE -b" \
+    "$BATS_TEST_TMPDIR/xcrun-commands.log"
+}

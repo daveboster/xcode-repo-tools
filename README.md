@@ -99,7 +99,7 @@ Future Bash helper behavior should follow the Extreme TDD workflow with Bats.
 
 - [ ] `lib/simulators.sh`: simulator helper functions.
   - [x] `xrt_sims_list_available`: listing available simulators
-  - [ ] `xrt_sims_find_by_name`: finding a simulator by name and runtime
+  - [x] `xrt_sims_find_by_name`: finding a simulator by name and runtime
   - [ ] `xrt_sims_boot`: booting an available simulator
   - [ ] `xrt_sims_wait_until_booted`: waiting until a simulator is booted
 - [ ] `test/helpers/mock_xcrun.bash`: mock helpers for `xcrun simctl`.

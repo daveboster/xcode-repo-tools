@@ -87,7 +87,26 @@ bats integration/starter-ui-baseline.bats
 
 ## Pre-PR checks
 
-Run the repo's local pre-PR Bats suite before opening a pull request:
+Before opening a pull request, make sure submodules are initialized:
+
+```bash
+git submodule update --init --recursive
+```
+
+Run the unit suite while developing:
+
+```bash
+test/bats/bin/bats test
+```
+
+Run shell syntax checks for the Bash libraries, test helpers, tests, integration
+scenarios, checks, and executable wrappers:
+
+```bash
+bash -n lib/*.sh test/helpers/*.bash test/*.bats integration/*.bats checks/*.bats bin/*
+```
+
+Run the repo's local pre-PR Bats suite before opening the pull request:
 
 ```bash
 test/bats/bin/bats checks/pre_pr.bats
@@ -99,6 +118,14 @@ UI test credential template.
 
 GitHub Actions runs the same suite through `.github/workflows/pre-pr.yml` on
 pull requests and pushes to `main`.
+
+Integration scenarios that exercise real simulators or Xcode should be run by
+the developer on a prepared local machine when the changed behavior requires
+that coverage:
+
+```bash
+test/bats/bin/bats integration
+```
 
 ## Extreme TDD workflow
 

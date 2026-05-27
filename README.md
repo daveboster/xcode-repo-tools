@@ -153,9 +153,9 @@ Future Bash helper behavior should follow the Extreme TDD workflow with Bats.
   - [x] `xrt_sims_status`: returning whether a simulator is booted.
     - [x] Return an error when the simulator cannot be found.
     - [x] Support a quiet mode option that suppresses the not-found error.
-  - [ ] `xrt_sims_stop`: stopping a simulator if it exists.
-    - [ ] Return success when the simulator is already stopped.
-    - [ ] Return an error when the simulator cannot be found.
+  - [x] `xrt_sims_stop`: stopping a simulator if it exists.
+    - [x] Return success when the simulator is already stopped.
+    - [x] Return an error when the simulator cannot be found.
   - [ ] `xrt_sims_delete`: deleting an existing simulator.
     - [ ] Return an error when the simulator is booted.
     - [ ] Support a force option that shuts down a booted simulator before

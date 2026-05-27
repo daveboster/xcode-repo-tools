@@ -102,7 +102,7 @@ assert_xcrun_command_logged() {
   run xrt_sims_stop "AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE"
 
   assert_success
-  refute_line --partial "simctl shutdown"
+  ! grep -F "simctl shutdown" "$BATS_TEST_TMPDIR/xcrun-commands.log"
 }
 
 @test "xrt_sims_stop shuts down booted simulator" {

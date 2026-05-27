@@ -50,6 +50,42 @@ assert_xcrun_command_logged() {
   assert_output --partial "No available simulator named: XRT Missing Simulator"
 }
 
+@test "xrt_sims_status returns booted state for matching simulator udid" {
+  setup_default_xcrun_mock
+
+  run xrt_sims_status "11111111-2222-3333-4444-555555555555"
+
+  assert_success
+  assert_output "Booted"
+}
+
+@test "xrt_sims_status returns shutdown state for matching simulator udid" {
+  setup_default_xcrun_mock
+
+  run xrt_sims_status "AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE"
+
+  assert_success
+  assert_output "Shutdown"
+}
+
+@test "xrt_sims_status fails when simulator udid is not available" {
+  setup_default_xcrun_mock
+
+  run xrt_sims_status "00000000-0000-0000-0000-000000000000"
+
+  assert_failure
+  assert_output --partial "No available simulator with UDID: 00000000-0000-0000-0000-000000000000"
+}
+
+@test "xrt_sims_status quiet mode succeeds without output when simulator is not available" {
+  setup_default_xcrun_mock
+
+  run xrt_sims_status --quiet "00000000-0000-0000-0000-000000000000"
+
+  assert_success
+  assert_output ""
+}
+
 @test "xrt_sims_wait_until_booted boots shutdown simulator and waits for bootstatus" {
   setup_default_xcrun_mock "$BATS_TEST_TMPDIR/xcrun-commands.log"
 

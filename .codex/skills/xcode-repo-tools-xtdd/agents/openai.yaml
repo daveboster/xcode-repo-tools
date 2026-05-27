@@ -1,0 +1,4 @@
+interface:
+  display_name: "Xcode Repo Tools XTDD"
+  short_description: "Extreme TDD for repo Bash helpers"
+  default_prompt: "Use $xcode-repo-tools-xtdd to implement the next xcode-repo-tools helper with integration-first Extreme TDD."

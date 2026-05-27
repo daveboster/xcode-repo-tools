@@ -9,10 +9,21 @@ setup() {
   mkdir -p "$BATS_TEST_TMPDIR/bin"
 }
 
-@test "xrt_sims_list_available prints available simulator name udid and state" {
+setup_default_xcrun_mock() {
   xrt_mock_xcrun_default_simctl_list_devices_available \
     "$BATS_TEST_TMPDIR/bin" \
-    "$BATS_TEST_TMPDIR/simctl-devices.txt"
+    "$BATS_TEST_TMPDIR/simctl-devices.txt" \
+    "${1:-}"
+}
+
+assert_xcrun_command_logged() {
+  local expected_command="$1"
+
+  grep -Fx "$expected_command" "$BATS_TEST_TMPDIR/xcrun-commands.log"
+}
+
+@test "xrt_sims_list_available prints available simulator name udid and state" {
+  setup_default_xcrun_mock
 
   run xrt_sims_list_available
 
@@ -22,9 +33,7 @@ setup() {
 }
 
 @test "xrt_sims_find_by_name returns the exact matching simulator row" {
-  xrt_mock_xcrun_default_simctl_list_devices_available \
-    "$BATS_TEST_TMPDIR/bin" \
-    "$BATS_TEST_TMPDIR/simctl-devices.txt"
+  setup_default_xcrun_mock
 
   run xrt_sims_find_by_name "iPhone 17 Pro"
 
@@ -33,9 +42,7 @@ setup() {
 }
 
 @test "xrt_sims_find_by_name fails when no simulator matches the name" {
-  xrt_mock_xcrun_default_simctl_list_devices_available \
-    "$BATS_TEST_TMPDIR/bin" \
-    "$BATS_TEST_TMPDIR/simctl-devices.txt"
+  setup_default_xcrun_mock
 
   run xrt_sims_find_by_name "XRT Missing Simulator"
 
@@ -44,16 +51,11 @@ setup() {
 }
 
 @test "xrt_sims_wait_until_booted boots shutdown simulator and waits for bootstatus" {
-  xrt_mock_xcrun_default_simctl_list_devices_available \
-    "$BATS_TEST_TMPDIR/bin" \
-    "$BATS_TEST_TMPDIR/simctl-devices.txt" \
-    "$BATS_TEST_TMPDIR/xcrun-commands.log"
+  setup_default_xcrun_mock "$BATS_TEST_TMPDIR/xcrun-commands.log"
 
   run xrt_sims_wait_until_booted "AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE"
 
   assert_success
-  grep -Fx "simctl boot AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE" \
-    "$BATS_TEST_TMPDIR/xcrun-commands.log"
-  grep -Fx "simctl bootstatus AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE -b" \
-    "$BATS_TEST_TMPDIR/xcrun-commands.log"
+  assert_xcrun_command_logged "simctl boot AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE"
+  assert_xcrun_command_logged "simctl bootstatus AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE -b"
 }

@@ -5,6 +5,10 @@
 Use the Superpowers plugin/process when available. For implementation work, use
 the Superpowers TDD workflow and apply the repo-specific Extreme TDD rule below.
 
+This repo also includes a repo-local Codex skill at
+`.codex/skills/xcode-repo-tools-xtdd`. Use that skill for future helper
+implementation tasks that should follow the branch-level XTDD workflow.
+
 ## Extreme TDD
 
 Behavior changes in this repo must start with an integration test.

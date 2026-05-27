@@ -61,6 +61,54 @@ The integration test limits the scope of implementation. Do not add unit tests,
 helper functions, options, wrappers, or abstractions unless they are required to
 make the current integration test pass.
 
+## XTDD branch and commit flow
+
+Use this branch flow when adding one helper behavior:
+
+1. Start from the current development branch, usually `dev/initial`.
+2. Create a focused feature branch, such as `dev/xrt-sims-find-by-name`.
+3. Add the first integration test for the desired real behavior.
+4. Run the integration test and confirm it fails for the expected reason.
+5. Commit that red integration test on the feature branch with `test:`.
+6. Add one focused unit test for the next required helper behavior.
+7. Run the unit test and confirm it fails for the expected reason.
+8. Commit that red unit test with `test:`.
+9. Implement the smallest helper code needed to make the unit test pass.
+10. Run unit tests, the target integration test, and then the full suite.
+11. Commit the green implementation with `feat:`.
+12. Skip refactor work if there is no meaningful cleanup.
+13. Merge the feature branch back into `dev/initial` with a release-note-ready
+    `feat:` merge commit.
+14. Do follow-up refactors separately with `refactor:` commits so they can be
+    excluded from user-facing release notes.
+
+Release-note guidance:
+
+- Use `feat:` commits or merge commits for user-visible behavior.
+- Use `test:` commits for red test checkpoints.
+- Use `refactor:` commits for cleanup-only work that should not appear in user
+  release notes.
+
+This repo also includes a repo-local Codex skill for this workflow at
+`.codex/skills/xcode-repo-tools-xtdd`. Use it for future helper work when you
+want the integration-first branch flow applied consistently.
+
+Example skill prompts:
+
+```text
+Use $xcode-repo-tools-xtdd to implement xrt_sims_boot.
+Start from dev/initial, create a focused dev branch, add the red integration test first, then use unit red-green-refactor commits until the integration test is green.
+```
+
+```text
+Use $xcode-repo-tools-xtdd for the next simulator helper: xrt_sims_boot.
+```
+
+```text
+Use $xcode-repo-tools-xtdd to start xrt_sims_wait_until_booted.
+Only create the focused branch and commit the first red integration test. Stop before unit tests or implementation.
+```
+
 ## Current scope
 
 The initial scaffold performs only Steps 1 through 5. Steps 6 through 11 are

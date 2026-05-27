@@ -37,6 +37,54 @@ In consuming repos, Bats is primarily an orchestration and specification layer.
 App-specific tests can describe readable pre-PR and GitHub Actions checks while
 delegating reusable behavior to this repo.
 
+## Getting started in an app repo
+
+Add this repo to an existing Xcode or iOS app repository as a submodule:
+
+```bash
+git submodule add <repo-url-or-local-path> tools/xcode-repo-tools
+git submodule update --init --recursive
+```
+
+Use the shared Bats setup helper from your app repo tests:
+
+```bash
+load "tools/xcode-repo-tools/test/helpers/bats_setup"
+
+setup() {
+  source "tools/xcode-repo-tools/lib/simulators.sh"
+  source "tools/xcode-repo-tools/lib/xcodebuild.sh"
+}
+```
+
+Then write app-specific Bats files that read like pre-PR checks while delegating
+common simulator and `xcodebuild` behavior to this repo.
+
+For a starter UI baseline scenario, copy:
+
+```bash
+tools/xcode-repo-tools/examples/starter-ui-baseline.bats
+```
+
+into your app repo's own `integration/` directory and update these values as
+needed:
+
+- `XRT_TOOLS_DIR`: submodule path, defaults to `tools/xcode-repo-tools`.
+- `XRT_BASELINE_SIM_NAME`: reusable baseline simulator name.
+- `XRT_UI_TEST_PROJECT`: app Xcode project path.
+- `XRT_UI_TEST_SCHEME`: app UI test scheme.
+- `XRT_UI_TEST_LOGIN_SELECTOR`: non-parallel test that primes the baseline.
+- `XRT_UI_TEST_SMOKE_SELECTOR`: parallel-safe test selector that validates
+  baseline reuse.
+
+Run it from the app repo with credentials loaded into the shell:
+
+```bash
+TEST_USERNAME="your-test-account@example.com" \
+TEST_PASSWORD="your-test-password" \
+bats integration/starter-ui-baseline.bats
+```
+
 ## Extreme TDD workflow
 
 This repo uses an Extreme TDD workflow for behavior implementation. Extreme TDD

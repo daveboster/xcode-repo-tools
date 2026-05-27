@@ -1,6 +1,7 @@
 #!/usr/bin/env bats
 
 load "helpers/bats_setup"
+load "helpers/mock_xcrun"
 
 setup() {
   source "$BATS_TEST_DIRNAME/../lib/simulators.sh"
@@ -9,21 +10,9 @@ setup() {
 }
 
 @test "xrt_sims_list_available prints available simulator name udid and state" {
-  cat >"$BATS_TEST_TMPDIR/bin/xcrun" <<'EOF'
-#!/usr/bin/env bash
-if [[ "$*" != "simctl list devices available" ]]; then
-  echo "unexpected xcrun args: $*" >&2
-  exit 64
-fi
-
-cat <<'SIMCTL'
-== Devices ==
--- iOS 26.0 --
-    iPhone 17 (AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE) (Shutdown) 
-    iPhone 17 Pro (11111111-2222-3333-4444-555555555555) (Booted) 
-SIMCTL
-EOF
-  chmod +x "$BATS_TEST_TMPDIR/bin/xcrun"
+  xrt_mock_xcrun_default_simctl_list_devices_available \
+    "$BATS_TEST_TMPDIR/bin" \
+    "$BATS_TEST_TMPDIR/simctl-devices.txt"
 
   run xrt_sims_list_available
 
@@ -33,22 +22,9 @@ EOF
 }
 
 @test "xrt_sims_find_by_name returns the exact matching simulator row" {
-  cat >"$BATS_TEST_TMPDIR/bin/xcrun" <<'EOF'
-#!/usr/bin/env bash
-if [[ "$*" != "simctl list devices available" ]]; then
-  echo "unexpected xcrun args: $*" >&2
-  exit 64
-fi
-
-cat <<'SIMCTL'
-== Devices ==
--- iOS 26.0 --
-    iPhone 17 (AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE) (Shutdown) 
-    iPhone 17 Pro (11111111-2222-3333-4444-555555555555) (Booted) 
-    iPad Pro 13-inch (M5) (99999999-8888-7777-6666-555555555555) (Shutdown) 
-SIMCTL
-EOF
-  chmod +x "$BATS_TEST_TMPDIR/bin/xcrun"
+  xrt_mock_xcrun_default_simctl_list_devices_available \
+    "$BATS_TEST_TMPDIR/bin" \
+    "$BATS_TEST_TMPDIR/simctl-devices.txt"
 
   run xrt_sims_find_by_name "iPhone 17 Pro"
 

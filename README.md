@@ -161,8 +161,9 @@ Future Bash helper behavior should follow the Extreme TDD workflow with Bats.
     - [ ] Support a force option that shuts down a booted simulator before
           deleting it.
   - [ ] `xrt_sims_create`: creating a simulator.
-    - [ ] Support an option that returns an error when the simulator already
-          exists.
+    - [ ] Create a simulator from an existing available simulator name as the
+          template.
+    - [ ] Return an error when the simulator already exists.
   - [ ] `xrt_sims_clone`: cloning a source simulator and shutting down the
         source simulator first if needed.
     - [ ] Return an error when the destination simulator already exists.

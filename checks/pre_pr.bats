@@ -24,6 +24,28 @@ bats_bin() {
   assert_success
 }
 
+@test "branch commit subjects follow release-note convention" {
+  local root
+  local base_ref
+  local bad_subjects
+  root="$(repo_root)"
+  base_ref="${GITHUB_BASE_REF:-main}"
+
+  if ! git -C "$root" rev-parse --verify "origin/$base_ref" >/dev/null 2>&1; then
+    skip "origin/$base_ref is not available"
+  fi
+
+  bad_subjects="$(
+    git -C "$root" log --format=%s "origin/$base_ref..HEAD" |
+      grep -v -E '^(feat|fix|docs|test|refactor|ci|chore)(\([a-z0-9._-]+\))?!?: .{1,72}$' || true
+  )"
+
+  run test -z "$bad_subjects"
+
+  assert_success
+  assert_output ""
+}
+
 @test "tracked files do not contain common secret patterns" {
   local root
   root="$(repo_root)"

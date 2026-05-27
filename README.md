@@ -159,18 +159,21 @@ release-note workflow. GitHub documents repository rulesets and commit metadata
 regex restrictions in
 [Creating rulesets for a repository](https://docs.github.com/en/enterprise-cloud@latest/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/creating-rulesets-for-a-repository).
 
-Configure these rules for protected development and release branches:
+The repository is configured with a GitHub ruleset plus the required
+`Pre-PR Checks` workflow. Native GitHub branch rules enforce the protected
+branch and required-check behavior; the required workflow enforces the commit
+message convention for the commits in a pull request.
 
-- [ ] Target `main`.
-- [ ] Require pull requests before merging.
-- [ ] Require the `Pre-PR Checks` workflow to pass.
-- [ ] Require commit messages to match the Conventional Commit prefix:
-      `^(feat|fix|docs|test|refactor|ci|chore)(\([a-z0-9._-]+\))?!?: .+`
-- [ ] Require the first commit-message line to stay short enough for release
+- [x] Target `main`.
+- [x] Require pull requests before merging.
+- [x] Require the `Pre-PR Checks` workflow to pass.
+- [x] Require commit messages to match the Conventional Commit prefix:
+      `^(feat|fix|docs|test|refactor|ci|chore)(\([a-z0-9._-]+\))?!?: .{1,72}$`
+- [x] Require the first commit-message line to stay short enough for release
       tooling and review summaries.
-- [ ] Prefer squash or rebase merges so the merged commit message is the
+- [x] Prefer squash or rebase merges so the merged commit message is the
       release-note source.
-- [ ] Use `feat:` and `fix:` for release-note-worthy changes; use the internal
+- [x] Use `feat:` and `fix:` for release-note-worthy changes; use the internal
       types for documentation, tests, refactors, and CI-only work.
 
 ## Extreme TDD workflow

@@ -1,6 +1,6 @@
 ---
 name: xcode-repo-tools-xtdd
-description: Use when implementing or extending xcode-repo-tools Bash helper behavior with the repo's integration-first Extreme TDD process, especially for simulator, xcodebuild, markdown, repo-check, or wrapper functions. This skill guides branch creation, red integration tests, focused unit red-green-refactor commits, release-note-friendly merge commits, and cleanup-only refactor commits.
+description: Use when implementing or extending xcode-repo-tools Bash helper behavior with the repo's integration-first Extreme TDD process, especially for simulator, xcodebuild, markdown, repo-check, or wrapper functions. This skill guides branch creation, review-gated red integration tests, focused unit red-green-refactor commits, release-note-friendly merge commits, and cleanup-only refactor commits.
 ---
 
 # Xcode Repo Tools XTDD
@@ -26,19 +26,37 @@ only to make that integration test pass.
 1. Add or update one Bats integration test under `integration/` for the desired
    real behavior.
 2. Run the integration test and confirm RED for the expected reason.
-3. Commit the red integration test with `test: ...`.
-4. Add one focused Bats unit test under `test/` for the next required helper
+3. Stop for user review before committing the red integration test.
+4. After approval, commit the red integration test with `test: ...`.
+5. Add one focused Bats unit test under `test/` for the next required helper
    behavior.
-5. Run the unit test and confirm RED for the expected reason.
-6. Commit the red unit test with `test: ...`.
-7. Implement the minimum Bash helper code needed to make that unit test green.
-8. Run `bats test`, the target integration test, and then `bats test
+6. Run the unit test and confirm RED for the expected reason.
+7. Commit the red unit test with `test: ...`.
+8. Implement the minimum Bash helper code needed to make that unit test green.
+9. Run `bats test`, the target integration test, and then `bats test
    integration`.
-9. Commit the green implementation with `feat: ...`.
-10. Refactor only if there is useful cleanup after green; keep it in a separate
+10. Stop for user review before committing the unit test and helper changes
+    that make the integration test green.
+11. After approval, commit the green implementation with `feat: ...`.
+12. Refactor only if there is useful cleanup after green; keep it in a separate
     `refactor:` commit.
-11. Merge the feature branch back into `dev/initial` with `--no-ff` and a
+13. Merge the feature branch back into `dev/initial` with `--no-ff` and a
     release-note-friendly `feat:` merge commit.
+14. After merging, leave any repo-refactoring uncommitted for user review
+    before creating a `refactor:` commit.
+
+## Review Gates
+
+Default to stopping at these points:
+
+- before committing the first red integration test
+- before committing function/unit-test changes that make the integration test
+  green
+- after merging the feature branch back to `dev/initial`, before committing any
+  repo-refactoring
+
+When stopping for review, summarize the changed files, the verification command
+and result, and the expected next commit message.
 
 ## Guardrails
 

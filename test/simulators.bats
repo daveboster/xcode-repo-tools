@@ -125,3 +125,49 @@ assert_xcrun_command_logged() {
   assert_failure
   assert_output --partial "No available simulator with UDID: 00000000-0000-0000-0000-000000000000"
 }
+
+@test "xrt_sims_create creates simulator from template name" {
+  setup_default_xcrun_mock "$BATS_TEST_TMPDIR/xcrun-commands.log"
+
+  run xrt_sims_create "XRT Test Simulator" "iPhone 17 Pro"
+
+  assert_success
+  assert_output "CCCCCCCC-DDDD-EEEE-FFFF-000000000000"
+  assert_xcrun_command_logged "simctl create XRT Test Simulator iPhone 17 Pro"
+}
+
+@test "xrt_sims_create fails when destination already exists" {
+  setup_default_xcrun_mock
+
+  run xrt_sims_create "iPhone 17 Pro" "iPhone 17"
+
+  assert_failure
+  assert_output --partial "Simulator already exists: iPhone 17 Pro"
+}
+
+@test "xrt_sims_delete deletes stopped simulator" {
+  setup_default_xcrun_mock "$BATS_TEST_TMPDIR/xcrun-commands.log"
+
+  run xrt_sims_delete "AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE"
+
+  assert_success
+  assert_xcrun_command_logged "simctl delete AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE"
+}
+
+@test "xrt_sims_delete fails when simulator is booted" {
+  setup_default_xcrun_mock
+
+  run xrt_sims_delete "11111111-2222-3333-4444-555555555555"
+
+  assert_failure
+  assert_output --partial "Cannot delete booted simulator: 11111111-2222-3333-4444-555555555555"
+}
+
+@test "xrt_sims_delete fails when simulator is not available" {
+  setup_default_xcrun_mock
+
+  run xrt_sims_delete "00000000-0000-0000-0000-000000000000"
+
+  assert_failure
+  assert_output --partial "No available simulator with UDID: 00000000-0000-0000-0000-000000000000"
+}

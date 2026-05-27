@@ -29,6 +29,13 @@ case "\$*" in
   simctl\ shutdown\ *)
     exit 0
     ;;
+  simctl\ create\ *)
+    echo "CCCCCCCC-DDDD-EEEE-FFFF-000000000000"
+    exit 0
+    ;;
+  simctl\ delete\ *)
+    exit 0
+    ;;
   *)
     echo "unexpected xcrun args: \$*" >&2
     exit 64

@@ -127,6 +127,52 @@ that coverage:
 test/bats/bin/bats integration
 ```
 
+## Commit and release-note convention
+
+Commit messages should use Conventional Commits so release notes can be
+generated from git history. The first line should be short, clear, and
+user-readable:
+
+```text
+fix: avoid simulator status pipe leak
+```
+
+Use the commit type to control release-note behavior:
+
+- `feat:` for new user-visible helper behavior.
+- `fix:` for user-visible bug fixes and reliability improvements.
+- `docs:`, `test:`, `refactor:`, `ci:`, and `chore:` for internal changes that
+  should usually be excluded from user-facing release notes.
+
+Release notes should be short bullet points written for users, not an
+implementation changelog:
+
+```text
+- Improved reliability of simulator status checks.
+- Added reusable UI test baseline helpers.
+```
+
+### GitHub ruleset setup checklist
+
+Use a GitHub repository ruleset to keep commit history compatible with this
+release-note workflow. GitHub documents repository rulesets and commit metadata
+regex restrictions in
+[Creating rulesets for a repository](https://docs.github.com/en/enterprise-cloud@latest/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/creating-rulesets-for-a-repository).
+
+Configure these rules for protected development and release branches:
+
+- [ ] Target `main`.
+- [ ] Require pull requests before merging.
+- [ ] Require the `Pre-PR Checks` workflow to pass.
+- [ ] Require commit messages to match the Conventional Commit prefix:
+      `^(feat|fix|docs|test|refactor|ci|chore)(\([a-z0-9._-]+\))?!?: .+`
+- [ ] Require the first commit-message line to stay short enough for release
+      tooling and review summaries.
+- [ ] Prefer squash or rebase merges so the merged commit message is the
+      release-note source.
+- [ ] Use `feat:` and `fix:` for release-note-worthy changes; use the internal
+      types for documentation, tests, refactors, and CI-only work.
+
 ## Extreme TDD workflow
 
 This repo uses an Extreme TDD workflow for behavior implementation. Extreme TDD

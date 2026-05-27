@@ -31,3 +31,27 @@ EOF
   assert_line $'iPhone 17\tAAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE\tShutdown'
   assert_line $'iPhone 17 Pro\t11111111-2222-3333-4444-555555555555\tBooted'
 }
+
+@test "xrt_sims_find_by_name returns the exact matching simulator row" {
+  cat >"$BATS_TEST_TMPDIR/bin/xcrun" <<'EOF'
+#!/usr/bin/env bash
+if [[ "$*" != "simctl list devices available" ]]; then
+  echo "unexpected xcrun args: $*" >&2
+  exit 64
+fi
+
+cat <<'SIMCTL'
+== Devices ==
+-- iOS 26.0 --
+    iPhone 17 (AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE) (Shutdown) 
+    iPhone 17 Pro (11111111-2222-3333-4444-555555555555) (Booted) 
+    iPad Pro 13-inch (M5) (99999999-8888-7777-6666-555555555555) (Shutdown) 
+SIMCTL
+EOF
+  chmod +x "$BATS_TEST_TMPDIR/bin/xcrun"
+
+  run xrt_sims_find_by_name "iPhone 17 Pro"
+
+  assert_success
+  assert_output $'iPhone 17 Pro\t11111111-2222-3333-4444-555555555555\tBooted'
+}

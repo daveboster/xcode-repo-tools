@@ -42,7 +42,7 @@ delegating reusable behavior to this repo.
 Add this repo to an existing Xcode or iOS app repository as a submodule:
 
 ```bash
-git submodule add <repo-url-or-local-path> tools/xcode-repo-tools
+git submodule add https://github.com/daveboster/xcode-repo-tools.git tools/xcode-repo-tools
 git submodule update --init --recursive
 ```
 
@@ -84,6 +84,21 @@ TEST_USERNAME="your-test-account@example.com" \
 TEST_PASSWORD="your-test-password" \
 bats integration/starter-ui-baseline.bats
 ```
+
+## Pre-PR checks
+
+Run the repo's local pre-PR Bats suite before opening a pull request:
+
+```bash
+test/bats/bin/bats checks/pre_pr.bats
+```
+
+The pre-PR suite runs the unit Bats tests and checks tracked files for common
+secret patterns, local-only file leaks, and accidental changes to the committed
+UI test credential template.
+
+GitHub Actions runs the same suite through `.github/workflows/pre-pr.yml` on
+pull requests and pushes to `main`.
 
 ## Extreme TDD workflow
 
@@ -453,5 +468,5 @@ security add-generic-password \
 ## Future submodule usage example
 
 ```bash
-git submodule add <repo-url-or-local-path> tools/xcode-repo-tools
+git submodule add https://github.com/daveboster/xcode-repo-tools.git tools/xcode-repo-tools
 ```

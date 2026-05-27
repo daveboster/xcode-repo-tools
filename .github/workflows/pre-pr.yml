@@ -1,0 +1,21 @@
+name: Pre-PR Checks
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  bats:
+    name: Bats pre-PR checks
+    runs-on: macos-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Run pre-PR Bats checks
+        run: test/bats/bin/bats checks/pre_pr.bats

@@ -95,3 +95,33 @@ assert_xcrun_command_logged() {
   assert_xcrun_command_logged "simctl boot AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE"
   assert_xcrun_command_logged "simctl bootstatus AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE -b"
 }
+
+@test "xrt_sims_stop succeeds without shutdown command when simulator is already stopped" {
+  setup_default_xcrun_mock "$BATS_TEST_TMPDIR/xcrun-commands.log"
+
+  run xrt_sims_stop "AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE"
+
+  assert_success
+  ! grep -F "simctl shutdown" "$BATS_TEST_TMPDIR/xcrun-commands.log"
+}
+
+@test "xrt_sims_stop shuts down booted simulator" {
+  xrt_mock_xcrun_booted_only_simctl_list_devices_available \
+    "$BATS_TEST_TMPDIR/bin" \
+    "$BATS_TEST_TMPDIR/simctl-devices.txt" \
+    "$BATS_TEST_TMPDIR/xcrun-commands.log"
+
+  run xrt_sims_stop "11111111-2222-3333-4444-555555555555"
+
+  assert_success
+  assert_xcrun_command_logged "simctl shutdown 11111111-2222-3333-4444-555555555555"
+}
+
+@test "xrt_sims_stop fails when simulator udid is not available" {
+  setup_default_xcrun_mock
+
+  run xrt_sims_stop "00000000-0000-0000-0000-000000000000"
+
+  assert_failure
+  assert_output --partial "No available simulator with UDID: 00000000-0000-0000-0000-000000000000"
+}

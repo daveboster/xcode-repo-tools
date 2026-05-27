@@ -26,6 +26,9 @@ case "\$*" in
   simctl\ bootstatus\ *\ -b)
     exit 0
     ;;
+  simctl\ shutdown\ *)
+    exit 0
+    ;;
   *)
     echo "unexpected xcrun args: \$*" >&2
     exit 64
@@ -34,6 +37,28 @@ esac
 EOF
 
   chmod +x "$mock_bin_dir/xcrun"
+}
+
+xrt_mock_xcrun_booted_only_devices_file() {
+  local output_file="$1"
+
+  cat >"$output_file" <<'SIMCTL'
+== Devices ==
+-- iOS 26.0 --
+    iPhone 17 Pro (11111111-2222-3333-4444-555555555555) (Booted) 
+SIMCTL
+}
+
+xrt_mock_xcrun_booted_only_simctl_list_devices_available() {
+  local mock_bin_dir="$1"
+  local output_file="$2"
+  local command_log_file="${3:-}"
+
+  xrt_mock_xcrun_booted_only_devices_file "$output_file"
+  xrt_mock_xcrun_simctl_list_devices_available \
+    "$mock_bin_dir" \
+    "$output_file" \
+    "$command_log_file"
 }
 
 xrt_mock_xcrun_default_devices_file() {

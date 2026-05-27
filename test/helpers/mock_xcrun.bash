@@ -4,17 +4,33 @@ set -euo pipefail
 xrt_mock_xcrun_simctl_list_devices_available() {
   local mock_bin_dir="$1"
   local output_file="$2"
+  local command_log_file="${3:-}"
 
   mkdir -p "$mock_bin_dir"
 
   cat >"$mock_bin_dir/xcrun" <<EOF
 #!/usr/bin/env bash
-if [[ "\$*" != "simctl list devices available" ]]; then
-  echo "unexpected xcrun args: \$*" >&2
-  exit 64
+command_log_file="$command_log_file"
+
+if [[ -n "\$command_log_file" ]]; then
+  printf '%s\n' "\$*" >>"\$command_log_file"
 fi
 
-cat "$output_file"
+case "\$*" in
+  "simctl list devices available")
+    cat "$output_file"
+    ;;
+  simctl\ boot\ *)
+    exit 0
+    ;;
+  simctl\ bootstatus\ *\ -b)
+    exit 0
+    ;;
+  *)
+    echo "unexpected xcrun args: \$*" >&2
+    exit 64
+    ;;
+esac
 EOF
 
   chmod +x "$mock_bin_dir/xcrun"
@@ -35,7 +51,11 @@ SIMCTL
 xrt_mock_xcrun_default_simctl_list_devices_available() {
   local mock_bin_dir="$1"
   local output_file="$2"
+  local command_log_file="${3:-}"
 
   xrt_mock_xcrun_default_devices_file "$output_file"
-  xrt_mock_xcrun_simctl_list_devices_available "$mock_bin_dir" "$output_file"
+  xrt_mock_xcrun_simctl_list_devices_available \
+    "$mock_bin_dir" \
+    "$output_file" \
+    "$command_log_file"
 }

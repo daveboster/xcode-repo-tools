@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+state_dir="$repo_root/.xrt-state"
+scenario_name="${XRT_UI_TEST_SIM_NAME:-Bats App Baseline iPhone}"
+
+source "$repo_root/lib/simulators.sh"
+
+mkdir -p "$state_dir"
+
+if existing_row="$(xrt_sims_find_by_name "$scenario_name" 2>/dev/null)"; then
+  existing_udid="$(printf '%s\n' "$existing_row" | awk -F '\t' '{ print $2 }')"
+  existing_state="$(xrt_sims_status "$existing_udid")"
+
+  if [[ "$existing_state" == "Booted" ]]; then
+    printf 'Simulator already exists and is booted: %s (%s)\n' "$scenario_name" "$existing_udid" >&2
+    printf 'Run bin/cleanup-ui-test-simulator first if you want to recreate it.\n' >&2
+    exit 1
+  fi
+
+  xrt_sims_delete "$existing_udid" >/dev/null
+fi
+
+template_row="$(xrt_sims_list_available | awk -F '\t' '$1 ~ /^iPhone / && !found { print; found = 1 }')"
+template_name="$(printf '%s\n' "$template_row" | awk -F '\t' '{ print $1 }')"
+
+if [[ -z "$template_name" ]]; then
+  printf 'No available iPhone simulator template found.\n' >&2
+  exit 1
+fi
+
+xrt_sims_create "$scenario_name" "$template_name" >/dev/null
+created_row="$(xrt_sims_find_by_name "$scenario_name")"
+created_udid="$(printf '%s\n' "$created_row" | awk -F '\t' '{ print $2 }')"
+
+printf '%s\n' "$scenario_name" >"$state_dir/ui-test-simulator-name"
+printf '%s\n' "$created_udid" >"$state_dir/ui-test-simulator-udid"
+
+printf 'Created simulator: %s\n' "$scenario_name"
+printf 'Template: %s\n' "$template_name"
+printf 'UDID: %s\n' "$created_udid"

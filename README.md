@@ -37,6 +37,54 @@ In consuming repos, Bats is primarily an orchestration and specification layer.
 App-specific tests can describe readable pre-PR and GitHub Actions checks while
 delegating reusable behavior to this repo.
 
+## Getting started in an app repo
+
+Add this repo to an existing Xcode or iOS app repository as a submodule:
+
+```bash
+git submodule add <repo-url-or-local-path> tools/xcode-repo-tools
+git submodule update --init --recursive
+```
+
+Use the shared Bats setup helper from your app repo tests:
+
+```bash
+load "tools/xcode-repo-tools/test/helpers/bats_setup"
+
+setup() {
+  source "tools/xcode-repo-tools/lib/simulators.sh"
+  source "tools/xcode-repo-tools/lib/xcodebuild.sh"
+}
+```
+
+Then write app-specific Bats files that read like pre-PR checks while delegating
+common simulator and `xcodebuild` behavior to this repo.
+
+For a starter UI baseline scenario, copy:
+
+```bash
+tools/xcode-repo-tools/examples/starter-ui-baseline.bats
+```
+
+into your app repo's own `integration/` directory and update these values as
+needed:
+
+- `XRT_TOOLS_DIR`: submodule path, defaults to `tools/xcode-repo-tools`.
+- `XRT_BASELINE_SIM_NAME`: reusable baseline simulator name.
+- `XRT_UI_TEST_PROJECT`: app Xcode project path.
+- `XRT_UI_TEST_SCHEME`: app UI test scheme.
+- `XRT_UI_TEST_LOGIN_SELECTOR`: non-parallel test that primes the baseline.
+- `XRT_UI_TEST_SMOKE_SELECTOR`: parallel-safe test selector that validates
+  baseline reuse.
+
+Run it from the app repo with credentials loaded into the shell:
+
+```bash
+TEST_USERNAME="your-test-account@example.com" \
+TEST_PASSWORD="your-test-password" \
+bats integration/starter-ui-baseline.bats
+```
+
 ## Extreme TDD workflow
 
 This repo uses an Extreme TDD workflow for behavior implementation. Extreme TDD
@@ -332,6 +380,74 @@ JSON. To run all Bats tests, including integration tests, use `Cmd+Shift+U`:
     "args": "Run all Bats tests"
   }
 ]
+```
+
+### UI test environment variables
+
+Some integration tests run Xcode UI tests that require credentials. For the
+sample UI test fixture, set these environment variables before running
+integration tests:
+
+- `TEST_USERNAME`
+- `TEST_PASSWORD`
+
+The fixture uses `src/UITests/UITests/UITestCredentials.swift` as a local
+credential bridge. The committed file contains template values only. Before
+running the troubleshooting helper, source the credential loader; the helper
+rewrites that Swift file locally with the current `TEST_USERNAME` and
+`TEST_PASSWORD` values, then runs the UI test.
+
+The credential Swift file is marked with `git update-index --skip-worktree`
+after the template is committed, so local secret values do not show in normal
+git status output.
+
+Do not commit credential values to this repo. To use the VS Code keyboard
+shortcuts with local credentials, copy `.vscode/user-tasks.example.json` into
+your user-level VS Code `tasks.json`, then replace the placeholder credential
+values.
+
+With those user-level task overrides in place:
+
+- `Cmd+U` runs the default unit test task.
+- `Cmd+Shift+U` runs all Bats tests, including credential-backed integration
+  tests.
+- Running the `Run Bats integration tests` task directly also includes the
+  credential environment variables.
+
+From a terminal, use inline environment variables instead:
+
+```bash
+TEST_USERNAME="your-test-account@example.com" \
+TEST_PASSWORD="your-test-password" \
+bats integration/xcodebuild_ui_tests_lifecycle.bats
+```
+
+You can also source the local credential loader before running UI tests:
+
+```bash
+source bin/load-ui-test-credentials
+bin/run-ui-test-helper
+```
+
+The loader exports `TEST_USERNAME` and `TEST_PASSWORD` into the current shell.
+It first checks macOS Keychain for generic passwords in the
+`xcode-repo-tools-ui-tests` service, then prompts without echoing input when a
+value is missing.
+
+To store the credentials in Keychain:
+
+```bash
+security add-generic-password \
+  -s xcode-repo-tools-ui-tests \
+  -a TEST_USERNAME \
+  -w "your-test-account@example.com" \
+  -U
+
+security add-generic-password \
+  -s xcode-repo-tools-ui-tests \
+  -a TEST_PASSWORD \
+  -w "your-test-password" \
+  -U
 ```
 
 ## Future submodule usage example

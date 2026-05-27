@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+state_dir="$repo_root/.xrt-state"
+scenario_name="${XRT_UI_TEST_SIM_NAME:-Bats App Baseline iPhone}"
+
+source "$repo_root/lib/simulators.sh"
+
+simulator_udid=""
+
+if [[ -f "$state_dir/ui-test-simulator-udid" ]]; then
+  simulator_udid="$(cat "$state_dir/ui-test-simulator-udid")"
+elif existing_row="$(xrt_sims_find_by_name "$scenario_name" 2>/dev/null)"; then
+  simulator_udid="$(printf '%s\n' "$existing_row" | awk -F '\t' '{ print $2 }')"
+fi
+
+if [[ -z "$simulator_udid" ]]; then
+  printf 'No UI test simulator found for cleanup.\n'
+  exit 0
+fi
+
+if xrt_sims_status --quiet "$simulator_udid" >/dev/null; then
+  xrt_sims_stop "$simulator_udid" >/dev/null 2>&1 || true
+  xrt_sims_delete "$simulator_udid" >/dev/null 2>&1 || true
+fi
+
+rm -f "$state_dir/ui-test-simulator-name" "$state_dir/ui-test-simulator-udid"
+
+printf 'Cleaned up simulator: %s\n' "$simulator_udid"

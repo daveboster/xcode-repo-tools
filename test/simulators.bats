@@ -96,6 +96,18 @@ assert_xcrun_command_logged() {
   assert_xcrun_command_logged "simctl bootstatus AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE -b"
 }
 
+@test "xrt_sims_wait_until_booted succeeds without boot command when simulator is already booted" {
+  xrt_mock_xcrun_booted_only_simctl_list_devices_available \
+    "$BATS_TEST_TMPDIR/bin" \
+    "$BATS_TEST_TMPDIR/simctl-devices.txt" \
+    "$BATS_TEST_TMPDIR/xcrun-commands.log"
+
+  run xrt_sims_wait_until_booted "11111111-2222-3333-4444-555555555555"
+
+  assert_success
+  ! grep -F "simctl boot 11111111-2222-3333-4444-555555555555" "$BATS_TEST_TMPDIR/xcrun-commands.log"
+}
+
 @test "xrt_sims_stop succeeds without shutdown command when simulator is already stopped" {
   setup_default_xcrun_mock "$BATS_TEST_TMPDIR/xcrun-commands.log"
 

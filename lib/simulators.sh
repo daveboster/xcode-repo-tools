@@ -58,6 +58,15 @@ xrt_sims_status() {
 
 xrt_sims_wait_until_booted() {
   local simulator_udid="$1"
+  local simulator_state
+
+  if ! simulator_state="$(xrt_sims_status "$simulator_udid")"; then
+    return 1
+  fi
+
+  if [[ "$simulator_state" == "Booted" ]]; then
+    return 0
+  fi
 
   xcrun simctl boot "$simulator_udid"
   xcrun simctl bootstatus "$simulator_udid" -b

@@ -1,0 +1,72 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+state_dir="$repo_root/.xrt-state"
+project_path="${XRT_UI_TEST_PROJECT:-src/UITests/UITests.xcodeproj}"
+scheme="${XRT_UI_TEST_SCHEME:-UITests}"
+only_testing="${XRT_UI_TEST_ONLY:-UITests/UITests/test_Login_With_Apple_Id}"
+execution_mode="${XRT_UI_TEST_EXECUTION_MODE:-specific}"
+credentials_swift="$repo_root/src/UITests/UITests/UITestCredentials.swift"
+
+source "$repo_root/lib/simulators.sh"
+source "$repo_root/lib/xcodebuild.sh"
+
+if [[ ! -f "$state_dir/ui-test-simulator-udid" ]]; then
+  printf 'Missing simulator state. Run bin/setup-ui-test-simulator first.\n' >&2
+  exit 1
+fi
+
+if [[ -z "${TEST_USERNAME:-}" || -z "${TEST_PASSWORD:-}" ]]; then
+  printf 'TEST_USERNAME and TEST_PASSWORD must be set before running UI tests.\n' >&2
+  exit 1
+fi
+
+simulator_udid="$(cat "$state_dir/ui-test-simulator-udid")"
+
+swift_escape() {
+  local value="$1"
+
+  value="${value//\\/\\\\}"
+  value="${value//\"/\\\"}"
+  printf '%s\n' "$value"
+}
+
+write_swift_credentials() {
+  local username
+  local password
+
+  username="$(swift_escape "$TEST_USERNAME")"
+  password="$(swift_escape "$TEST_PASSWORD")"
+
+  cat >"$credentials_swift" <<EOF
+import Foundation
+
+enum UITestCredentials {
+   static let username = "$username"
+   static let password = "$password"
+}
+EOF
+}
+
+write_swift_credentials
+
+printf 'Booting simulator: %s\n' "$simulator_udid"
+xrt_sims_wait_until_booted "$simulator_udid"
+
+printf 'Running UI tests: project=%s scheme=%s simulator=%s only=%s mode=%s\n' \
+  "$project_path" \
+  "$scheme" \
+  "$simulator_udid" \
+  "$only_testing" \
+  "$execution_mode"
+
+(
+  cd "$repo_root"
+  XRT_XCODEBUILD_FORWARD_CREDENTIALS=false xrt_xcodebuild_run_ui_tests \
+    "$project_path" \
+    "$scheme" \
+    "$simulator_udid" \
+    "$only_testing" \
+    "$execution_mode"
+)

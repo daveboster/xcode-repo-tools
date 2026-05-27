@@ -1,0 +1,40 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Run Bats integration tests",
+      "type": "shell",
+      "command": "bats",
+      "args": [
+        "integration"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}",
+        "env": {
+          "TEST_USERNAME": "your-test-account@example.com",
+          "TEST_PASSWORD": "your-test-password"
+        }
+      },
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "Run all Bats tests",
+      "type": "shell",
+      "command": "bats",
+      "args": [
+        "test",
+        "integration"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}",
+        "env": {
+          "TEST_USERNAME": "your-test-account@example.com",
+          "TEST_PASSWORD": "your-test-password"
+        }
+      },
+      "group": "test",
+      "problemMatcher": []
+    }
+  ]
+}

@@ -28,7 +28,7 @@ setup_file() {
     xrt_sims_delete "$existing_udid"
   fi
 
-  template_row="$(xrt_sims_list_available | awk -F '\t' '$1 ~ /^iPhone / { print; exit }')"
+  template_row="$(xrt_sims_list_available | awk -F '\t' '$1 ~ /^iPhone / && !found { print; found = 1 }')"
   template_name="$(printf '%s\n' "$template_row" | awk -F '\t' '{ print $1 }')"
 
   [[ -n "$template_name" ]]

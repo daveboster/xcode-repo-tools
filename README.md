@@ -130,11 +130,21 @@ test/bats/bin/bats integration
 ## Commit and release-note convention
 
 Commit messages should use Conventional Commits so release notes can be
-generated from git history. The first line should be short, clear, and
-user-readable:
+generated from git history. Use this first-line format:
+
+```text
+<type>(<optional-scope>): <subject>
+```
+
+The scope is optional. Keep the subject short, clear, present tense, and useful
+as source material for a release-note bullet.
+
+Examples:
 
 ```text
 fix: avoid simulator status pipe leak
+feat(simulators): add baseline clone helper
+docs(readme): clarify submodule setup
 ```
 
 Use the commit type to control release-note behavior:
@@ -144,6 +154,14 @@ Use the commit type to control release-note behavior:
 - `docs:`, `test:`, `refactor:`, `ci:`, and `chore:` for internal changes that
   should usually be excluded from user-facing release notes.
 
+Choose the narrowest type that explains why the commit matters:
+
+- `docs:` for README, examples, and process documentation.
+- `test:` for adding or refactoring tests without changing helper behavior.
+- `refactor:` for code cleanup that preserves behavior.
+- `ci:` for GitHub Actions, checks, and automation configuration.
+- `chore:` for maintenance that is not production helper behavior.
+
 Release notes should be short bullet points written for users, not an
 implementation changelog:
 
@@ -151,6 +169,9 @@ implementation changelog:
 - Improved reliability of simulator status checks.
 - Added reusable UI test baseline helpers.
 ```
+
+This convention is based on the concise semantic commit format described in
+[joshbuchea/semantic-commit-messages.md](https://gist.github.com/joshbuchea/6f47e86d2510bce28f8e7f42ae84c716).
 
 ### GitHub ruleset setup checklist
 

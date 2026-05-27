@@ -77,3 +77,31 @@ xrt_sims_stop() {
 
   xcrun simctl shutdown "$simulator_udid"
 }
+
+xrt_sims_create() {
+  local simulator_name="$1"
+  local template_name="$2"
+
+  if xrt_sims_find_by_name "$simulator_name" >/dev/null 2>&1; then
+    echo "Simulator already exists: $simulator_name" >&2
+    return 1
+  fi
+
+  xcrun simctl create "$simulator_name" "$template_name"
+}
+
+xrt_sims_delete() {
+  local simulator_udid="$1"
+  local simulator_state
+
+  if ! simulator_state="$(xrt_sims_status "$simulator_udid")"; then
+    return 1
+  fi
+
+  if [[ "$simulator_state" == "Booted" ]]; then
+    echo "Cannot delete booted simulator: $simulator_udid" >&2
+    return 1
+  fi
+
+  xcrun simctl delete "$simulator_udid"
+}

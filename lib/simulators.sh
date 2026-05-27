@@ -31,6 +31,31 @@ xrt_sims_find_by_name() {
   printf '%s\n' "$simulator_row"
 }
 
+xrt_sims_status() {
+  local quiet=false
+  local simulator_udid
+  local simulator_state
+
+  if [[ "${1:-}" == "--quiet" ]]; then
+    quiet=true
+    shift
+  fi
+
+  simulator_udid="$1"
+  simulator_state="$(xrt_sims_list_available | awk -F '\t' -v udid="$simulator_udid" '$2 == udid { print $3; exit }')"
+
+  if [[ -z "$simulator_state" ]]; then
+    if [[ "$quiet" == true ]]; then
+      return 0
+    fi
+
+    echo "No available simulator with UDID: $simulator_udid" >&2
+    return 1
+  fi
+
+  printf '%s\n' "$simulator_state"
+}
+
 xrt_sims_wait_until_booted() {
   local simulator_udid="$1"
 

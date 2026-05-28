@@ -1,21 +1,9 @@
 #!/usr/bin/env bats
 
 # Copy this file into a consuming repo's test/integration/ directory, then update
-# XRT_TOOLS_DIR if the submodule is installed somewhere else.
+# test/xrt-example-config.bash if the submodule is installed somewhere else.
 
-XRT_APP_ROOT="${XRT_APP_ROOT:-$BATS_TEST_DIRNAME/../..}"
-if [[ -z "${XRT_TOOLS_DIR:-}" ]]; then
-  if [[ -d "$XRT_APP_ROOT/tools/xcode-repo-tools" ]]; then
-    XRT_TOOLS_DIR="$XRT_APP_ROOT/tools/xcode-repo-tools"
-  else
-    XRT_TOOLS_DIR="$XRT_APP_ROOT"
-  fi
-fi
-XRT_BASELINE_SIM_NAME="${XRT_BASELINE_SIM_NAME:-Bats App Baseline iPhone}"
-XRT_UI_TEST_PROJECT="${XRT_UI_TEST_PROJECT:-src/UITests/UITests.xcodeproj}"
-XRT_UI_TEST_SCHEME="${XRT_UI_TEST_SCHEME:-UITests}"
-XRT_UI_TEST_LOGIN_SELECTOR="${XRT_UI_TEST_LOGIN_SELECTOR:-UITests/UITests/test_Login_With_Apple_Id}"
-XRT_UI_TEST_SMOKE_SELECTOR="${XRT_UI_TEST_SMOKE_SELECTOR:-UITests/UITestsLaunchTests}"
+source "$BATS_TEST_DIRNAME/../xrt-example-config.bash"
 
 load "$XRT_TOOLS_DIR/test/helpers/bats_setup"
 
@@ -97,7 +85,7 @@ baseline_origin() {
     "$XRT_UI_TEST_PROJECT" \
     "$XRT_UI_TEST_SCHEME" \
     "$(baseline_udid)" \
-    "$XRT_UI_TEST_LOGIN_SELECTOR" \
+    "$XRT_UI_TEST_ICLOUD_SETUP_SELECTOR" \
     "specific"
 
   assert_success

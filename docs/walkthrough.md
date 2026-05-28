@@ -38,6 +38,7 @@ Create the app repo test directory and copy the
 
 ```bash
 mkdir -p test
+cp tools/xcode-repo-tools/examples/xrt-example-config.bash test/xrt-example-config.bash
 cp tools/xcode-repo-tools/examples/01-app-pre-pr.bats test/01-pre-pr.bats
 ```
 
@@ -64,10 +65,14 @@ It also includes disabled tests for credential-backed setup:
 
 - A commented-out test that checks `TEST_USERNAME` and `TEST_PASSWORD`.
 - A commented-out test that calls `xrt_xcodebuild_run_ui_tests` in `specific`
-  mode to prime the baseline image with an app-specific iCloud setup test.
+  mode to prime the baseline image with the bundled fixture setup test.
 
-Enable those tests only after setting the app project, scheme, and selector
-values.
+Enable those tests only after setting credentials. The setup file uses the
+bundled fixture defaults in `test/xrt-example-config.bash`:
+
+- `XRT_UI_TEST_PROJECT`
+- `XRT_UI_TEST_SCHEME`
+- `XRT_UI_TEST_ICLOUD_SETUP_SELECTOR`
 
 Run the setup:
 
@@ -91,15 +96,19 @@ By default, the scenario runs the sample UI test project in the
 tools/xcode-repo-tools/test/bats/bin/bats test/integration/03-ui-tests-from-baseline.bats
 ```
 
-Set `XRT_UI_TEST_PROJECT` and `XRT_UI_TEST_SCHEME` only when you are ready to
-point the copied file at your app's UI test target.
-
 The scenario uses the existing baseline simulator and runs
 `UITests/UITestsLaunchTests` in normal mode. Normal mode allows Xcode's
 parallel testing behavior to clone and reuse the baseline.
 
-The copied file also includes a disabled test that shows how to call a targeted
-test class or method with `xrt_xcodebuild_run_ui_tests`.
+The copied file also includes disabled tests that show how to call your app's
+smoke tests or a targeted test class or method with
+`xrt_xcodebuild_run_ui_tests`. Configure your app's own UI test project once in
+`test/xrt-example-config.bash` or through the environment:
+
+- `XRT_PROJECT_UI_TEST_PROJECT`
+- `XRT_PROJECT_UI_TEST_SCHEME`
+- `XRT_PROJECT_UI_TEST_SMOKE_SELECTOR`
+- `XRT_PROJECT_UI_TEST_TARGET_SELECTOR`
 
 ## 4. Copy the cleanup scenario
 
@@ -120,6 +129,7 @@ tools/xcode-repo-tools/test/bats/bin/bats test/integration/04-ui-baseline-cleanu
 
 ```bash
 mkdir -p test/integration
+cp tools/xcode-repo-tools/examples/xrt-example-config.bash test/xrt-example-config.bash
 cp tools/xcode-repo-tools/examples/01-app-pre-pr.bats test/01-pre-pr.bats
 cp tools/xcode-repo-tools/examples/02-ui-baseline-setup.bats test/integration/02-ui-baseline-setup.bats
 cp tools/xcode-repo-tools/examples/03-ui-tests-from-baseline.bats test/integration/03-ui-tests-from-baseline.bats

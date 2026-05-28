@@ -3,9 +3,7 @@
 # Copy this file into a consuming repo's test/integration/ directory.
 # It stops and deletes the reusable iPhone baseline simulator.
 
-XRT_APP_ROOT="${XRT_APP_ROOT:-$BATS_TEST_DIRNAME/../..}"
-XRT_TOOLS_DIR="${XRT_TOOLS_DIR:-$XRT_APP_ROOT/tools/xcode-repo-tools}"
-XRT_BASELINE_STATE_DIR="${XRT_BASELINE_STATE_DIR:-$XRT_APP_ROOT/.xrt-state}"
+source "$BATS_TEST_DIRNAME/../xrt-example-config.bash"
 
 load "$XRT_TOOLS_DIR/test/helpers/bats_setup"
 

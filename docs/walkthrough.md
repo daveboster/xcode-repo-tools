@@ -84,13 +84,15 @@ app repo:
 cp tools/xcode-repo-tools/examples/03-ui-tests-from-baseline.bats test/integration/03-ui-tests-from-baseline.bats
 ```
 
-Set your app's Xcode project and UI test scheme, then run the scenario:
+By default, the scenario runs the sample UI test project in the
+`xcode-repo-tools` submodule. Run it with:
 
 ```bash
-XRT_UI_TEST_PROJECT="YourApp.xcodeproj" \
-XRT_UI_TEST_SCHEME="YourAppUITests" \
 tools/xcode-repo-tools/test/bats/bin/bats test/integration/03-ui-tests-from-baseline.bats
 ```
+
+Set `XRT_UI_TEST_PROJECT` and `XRT_UI_TEST_SCHEME` only when you are ready to
+point the copied file at your app's UI test target.
 
 The scenario uses the existing baseline simulator and runs
 `UITests/UITestsLaunchTests` in normal mode. Normal mode allows Xcode's
@@ -133,8 +135,6 @@ tools/xcode-repo-tools/test/bats/bin/bats test/integration/02-ui-baseline-setup.
 ## Run UI tests
 
 ```bash
-XRT_UI_TEST_PROJECT="YourApp.xcodeproj" \
-XRT_UI_TEST_SCHEME="YourAppUITests" \
 tools/xcode-repo-tools/test/bats/bin/bats test/integration/03-ui-tests-from-baseline.bats
 ```
 

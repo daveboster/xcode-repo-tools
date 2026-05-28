@@ -149,8 +149,6 @@ run_app_bats() {
     cd "$XRT_APP_ROOT"
     PATH="$XRT_MOCK_BIN:$PATH" \
       XRT_TOOLS_DIR="$XRT_TOOLS_DIR" \
-      XRT_UI_TEST_PROJECT="ExampleApp.xcodeproj" \
-      XRT_UI_TEST_SCHEME="ExampleAppUITests" \
       "$XRT_TOOLS_DIR/test/bats/bin/bats" "$@"
   )
 }

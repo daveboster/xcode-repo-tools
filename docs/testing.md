@@ -68,6 +68,16 @@ The default test task runs:
 bats test
 ```
 
+The integration and all-test tasks source the credential loader first:
+
+```bash
+source bin/load-ui-test-credentials && bats integration
+source bin/load-ui-test-credentials && bats test integration
+```
+
+If `TEST_USERNAME` or `TEST_PASSWORD` is missing, the loader checks macOS
+Keychain first, then prompts in the VS Code task terminal.
+
 VS Code keybindings are user-level settings. To run the default test task with
 `Cmd+U`, add this to your VS Code Keyboard Shortcuts JSON. To run all Bats
 tests, including integration tests, use `Cmd+Shift+U`:
@@ -105,18 +115,18 @@ The credential Swift file is marked with `git update-index --skip-worktree`
 after the template is committed, so local secret values do not show in normal
 git status output.
 
-Do not commit credential values to this repo. To use the VS Code keyboard
-shortcuts with local credentials, copy `.vscode/user-tasks.example.json` into
-your user-level VS Code `tasks.json`, then replace the placeholder credential
-values.
+Do not commit credential values to this repo. The repo-level VS Code tasks load
+credentials with `bin/load-ui-test-credentials`; copy
+`.vscode/user-tasks.example.json` into your user-level VS Code `tasks.json` only
+when you want a user-level override.
 
-With those user-level task overrides in place:
+With the recommended keybindings in place:
 
 - `Cmd+U` runs the default unit test task.
 - `Cmd+Shift+U` runs all Bats tests, including credential-backed integration
-  tests.
-- Running the `Run Bats integration tests` task directly also includes the
-  credential environment variables.
+  tests, and prompts for missing credentials.
+- Running the `Run Bats integration tests` task directly uses the same
+  credential loader.
 
 From a terminal, use inline environment variables instead:
 

@@ -20,9 +20,10 @@
     {
       "label": "Run Bats integration tests",
       "type": "shell",
-      "command": "bats",
+      "command": "bash",
       "args": [
-        "integration"
+        "-lc",
+        "source bin/load-ui-test-credentials && bats integration"
       ],
       "options": {
         "cwd": "${workspaceFolder}"
@@ -33,10 +34,10 @@
     {
       "label": "Run all Bats tests",
       "type": "shell",
-      "command": "bats",
+      "command": "bash",
       "args": [
-        "test",
-        "integration"
+        "-lc",
+        "source bin/load-ui-test-credentials && bats test integration"
       ],
       "options": {
         "cwd": "${workspaceFolder}"

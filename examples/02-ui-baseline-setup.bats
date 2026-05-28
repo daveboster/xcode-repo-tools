@@ -38,7 +38,7 @@ baseline_udid() {
   local created_row
   local created_udid
 
-  template_row="$(xrt_sims_list_available | awk -F '\t' '$1 ~ /^iPhone / { print; exit }')"
+  template_row="$(xrt_sims_list_available | awk -F '\t' '$1 ~ /^iPhone / && row == "" { row = $0 } END { print row }')"
   template_name="$(printf '%s\n' "$template_row" | awk -F '\t' '{ print $1 }')"
 
   run test -n "$template_name"

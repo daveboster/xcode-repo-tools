@@ -13,16 +13,16 @@ Run the walkthrough driver to copy missing example files, then rerun the copied
 checks directly whenever you want:
 
 ```bash
-# Copy missing walkthrough files and run the starter checks once.
+printf '%s\n' "Copy missing walkthrough files and run the starter checks once."
 tools/xcode-repo-tools/test/bats/bin/bats tools/xcode-repo-tools/integration/examples_walkthrough.bats
 
-# Run the copied pre-PR check.
+printf '%s\n' "Run the copied pre-PR check."
 tools/xcode-repo-tools/test/bats/bin/bats test/01-pre-pr.bats
 
-# Run the copied integration tests.
+printf '%s\n' "Run the copied integration tests."
 tools/xcode-repo-tools/test/bats/bin/bats test/integration
 
-# Run the copied pre-PR check and integration tests together.
+printf '%s\n' "Run the copied pre-PR check and integration tests together."
 tools/xcode-repo-tools/test/bats/bin/bats test/01-pre-pr.bats test/integration
 ```
 

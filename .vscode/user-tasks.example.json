@@ -4,16 +4,13 @@
     {
       "label": "Run Bats integration tests",
       "type": "shell",
-      "command": "bats",
+      "command": "bash",
       "args": [
-        "integration"
+        "-lc",
+        "source bin/load-ui-test-credentials && bats integration"
       ],
       "options": {
-        "cwd": "${workspaceFolder}",
-        "env": {
-          "TEST_USERNAME": "your-test-account@example.com",
-          "TEST_PASSWORD": "your-test-password"
-        }
+        "cwd": "${workspaceFolder}"
       },
       "group": "test",
       "problemMatcher": []
@@ -21,17 +18,13 @@
     {
       "label": "Run all Bats tests",
       "type": "shell",
-      "command": "bats",
+      "command": "bash",
       "args": [
-        "test",
-        "integration"
+        "-lc",
+        "source bin/load-ui-test-credentials && bats test integration"
       ],
       "options": {
-        "cwd": "${workspaceFolder}",
-        "env": {
-          "TEST_USERNAME": "your-test-account@example.com",
-          "TEST_PASSWORD": "your-test-password"
-        }
+        "cwd": "${workspaceFolder}"
       },
       "group": "test",
       "problemMatcher": []

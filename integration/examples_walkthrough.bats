@@ -95,10 +95,10 @@ EOF
 }
 
 copy_walkthrough_examples() {
-  cp "$XRT_REPO_ROOT/examples/app-pre-pr.bats" "$XRT_APP_ROOT/test/pre_pr.bats"
-  cp "$XRT_REPO_ROOT/examples/ui-baseline-setup.bats" "$XRT_APP_ROOT/test/integration/ui-baseline-setup.bats"
-  cp "$XRT_REPO_ROOT/examples/ui-tests-from-baseline.bats" "$XRT_APP_ROOT/test/integration/ui-tests-from-baseline.bats"
-  cp "$XRT_REPO_ROOT/examples/ui-baseline-cleanup.bats" "$XRT_APP_ROOT/test/integration/ui-baseline-cleanup.bats"
+  cp "$XRT_REPO_ROOT/examples/01-app-pre-pr.bats" "$XRT_APP_ROOT/test/01-pre-pr.bats"
+  cp "$XRT_REPO_ROOT/examples/02-ui-baseline-setup.bats" "$XRT_APP_ROOT/test/integration/02-ui-baseline-setup.bats"
+  cp "$XRT_REPO_ROOT/examples/03-ui-tests-from-baseline.bats" "$XRT_APP_ROOT/test/integration/03-ui-tests-from-baseline.bats"
+  cp "$XRT_REPO_ROOT/examples/04-ui-baseline-cleanup.bats" "$XRT_APP_ROOT/test/integration/04-ui-baseline-cleanup.bats"
 }
 
 run_app_bats() {
@@ -114,20 +114,20 @@ run_app_bats() {
 @test "walkthrough example Bats files run in documented order" {
   copy_walkthrough_examples
 
-  run run_app_bats test/pre_pr.bats
+  run run_app_bats test/01-pre-pr.bats
   assert_success
 
-  run run_app_bats test/integration/ui-baseline-setup.bats
+  run run_app_bats test/integration/02-ui-baseline-setup.bats
   assert_success
   run test -s "$XRT_APP_ROOT/.xrt-state/baseline-iphone-udid"
   assert_success
 
-  run run_app_bats test/integration/ui-tests-from-baseline.bats
+  run run_app_bats test/integration/03-ui-tests-from-baseline.bats
   assert_success
   run grep -F -- "-only-testing:UITests/UITestsLaunchTests" "$XRT_XCODEBUILD_LOG"
   assert_success
 
-  run run_app_bats test/integration/ui-baseline-cleanup.bats
+  run run_app_bats test/integration/04-ui-baseline-cleanup.bats
   assert_success
   run test ! -e "$XRT_APP_ROOT/.xrt-state/baseline-iphone-udid"
   assert_success

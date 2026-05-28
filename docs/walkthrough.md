@@ -102,9 +102,15 @@ cp tools/xcode-repo-tools/examples/04-ui-baseline-cleanup.bats test/integration/
 
 ## TLDR: run the starter checks
 
+Run the walkthrough driver to copy missing example files, run the pre-PR check,
+and run the copied integration folder:
+
 ```bash
-tools/xcode-repo-tools/test/bats/bin/bats test/01-pre-pr.bats test/integration
+tools/xcode-repo-tools/test/bats/bin/bats tools/xcode-repo-tools/integration/examples_walkthrough.bats
 ```
+
+The copy step leaves existing files alone so you can rerun the command after
+editing the copied examples.
 
 ## Run setup image
 

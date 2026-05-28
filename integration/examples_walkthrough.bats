@@ -4,14 +4,17 @@ load "../test/helpers/bats_setup"
 
 setup_file() {
   XRT_REPO_ROOT="$(cd "$BATS_TEST_DIRNAME/.." && pwd)"
-  XRT_APP_ROOT="$XRT_REPO_ROOT"
+  XRT_TOOLS_DIR="$XRT_REPO_ROOT"
+  XRT_APP_ROOT="${XRT_APP_ROOT:-$(default_app_root)}"
   XRT_MOCK_BIN="$BATS_FILE_TMPDIR/bin"
   XRT_SIMCTL_STATE="$BATS_FILE_TMPDIR/simctl-devices.txt"
   XRT_XCRUN_LOG="$BATS_FILE_TMPDIR/xcrun-commands.log"
   XRT_XCODEBUILD_LOG="$BATS_FILE_TMPDIR/xcodebuild-commands.log"
-  export XRT_REPO_ROOT XRT_APP_ROOT XRT_MOCK_BIN XRT_SIMCTL_STATE XRT_XCRUN_LOG XRT_XCODEBUILD_LOG
+  XRT_COPIED_FILES="$BATS_FILE_TMPDIR/copied-files.txt"
+  export XRT_REPO_ROOT XRT_TOOLS_DIR XRT_APP_ROOT XRT_MOCK_BIN XRT_SIMCTL_STATE XRT_XCRUN_LOG XRT_XCODEBUILD_LOG XRT_COPIED_FILES
 
   mkdir -p "$XRT_MOCK_BIN"
+  : >"$XRT_COPIED_FILES"
 
   cat >"$XRT_SIMCTL_STATE" <<'SIMCTL'
 == Devices ==
@@ -23,17 +26,28 @@ SIMCTL
   create_mock_xcodebuild
 }
 
+default_app_root() {
+  if [[ "$(basename "$XRT_REPO_ROOT")" == "xcode-repo-tools" ]] &&
+    [[ "$(basename "$(dirname "$XRT_REPO_ROOT")")" == "tools" ]]; then
+    cd "$XRT_REPO_ROOT/../.." && pwd
+    return
+  fi
+
+  printf '%s\n' "$XRT_REPO_ROOT"
+}
+
 teardown_file() {
-  rm -f \
-    "$XRT_REPO_ROOT/test/01-pre-pr.bats" \
-    "$XRT_REPO_ROOT/test/integration/02-ui-baseline-setup.bats" \
-    "$XRT_REPO_ROOT/test/integration/03-ui-tests-from-baseline.bats" \
-    "$XRT_REPO_ROOT/test/integration/04-ui-baseline-cleanup.bats"
-  rmdir "$XRT_REPO_ROOT/test/integration" 2>/dev/null || true
+  if [[ -f "$XRT_COPIED_FILES" ]]; then
+    while IFS= read -r copied_file; do
+      rm -f "$copied_file"
+    done <"$XRT_COPIED_FILES"
+  fi
+
+  rmdir "$XRT_APP_ROOT/test/integration" 2>/dev/null || true
 }
 
 setup() {
-  export XRT_APP_ROOT XRT_MOCK_BIN XRT_SIMCTL_STATE XRT_XCRUN_LOG XRT_XCODEBUILD_LOG
+  export XRT_TOOLS_DIR XRT_APP_ROOT XRT_MOCK_BIN XRT_SIMCTL_STATE XRT_XCRUN_LOG XRT_XCODEBUILD_LOG XRT_COPIED_FILES
 }
 
 create_mock_xcrun() {
@@ -102,67 +116,65 @@ EOF
 }
 
 copy_walkthrough_examples() {
-  mkdir -p "$XRT_REPO_ROOT/test/integration"
+  mkdir -p "$XRT_APP_ROOT/test/integration"
 
-  cp "$XRT_REPO_ROOT/examples/01-app-pre-pr.bats" "$XRT_REPO_ROOT/test/01-pre-pr.bats"
-  cp "$XRT_REPO_ROOT/examples/02-ui-baseline-setup.bats" "$XRT_REPO_ROOT/test/integration/02-ui-baseline-setup.bats"
-  cp "$XRT_REPO_ROOT/examples/03-ui-tests-from-baseline.bats" "$XRT_REPO_ROOT/test/integration/03-ui-tests-from-baseline.bats"
-  cp "$XRT_REPO_ROOT/examples/04-ui-baseline-cleanup.bats" "$XRT_REPO_ROOT/test/integration/04-ui-baseline-cleanup.bats"
+  copy_walkthrough_example "$XRT_TOOLS_DIR/examples/01-app-pre-pr.bats" "$XRT_APP_ROOT/test/01-pre-pr.bats"
+  copy_walkthrough_example "$XRT_TOOLS_DIR/examples/02-ui-baseline-setup.bats" "$XRT_APP_ROOT/test/integration/02-ui-baseline-setup.bats"
+  copy_walkthrough_example "$XRT_TOOLS_DIR/examples/03-ui-tests-from-baseline.bats" "$XRT_APP_ROOT/test/integration/03-ui-tests-from-baseline.bats"
+  copy_walkthrough_example "$XRT_TOOLS_DIR/examples/04-ui-baseline-cleanup.bats" "$XRT_APP_ROOT/test/integration/04-ui-baseline-cleanup.bats"
 }
 
-run_repo_bats() {
+copy_walkthrough_example() {
+  local source_path="$1"
+  local destination_path="$2"
+
+  if [[ -e "$destination_path" ]]; then
+    return 0
+  fi
+
+  cp "$source_path" "$destination_path"
+  printf '%s\n' "$destination_path" >>"$XRT_COPIED_FILES"
+}
+
+run_app_bats() {
   (
-    cd "$XRT_REPO_ROOT"
+    cd "$XRT_APP_ROOT"
     PATH="$XRT_MOCK_BIN:$PATH" \
-      XRT_TOOLS_DIR="$XRT_REPO_ROOT" \
+      XRT_TOOLS_DIR="$XRT_TOOLS_DIR" \
       XRT_UI_TEST_PROJECT="ExampleApp.xcodeproj" \
       XRT_UI_TEST_SCHEME="ExampleAppUITests" \
-      test/bats/bin/bats "$@"
+      "$XRT_TOOLS_DIR/test/bats/bin/bats" "$@"
   )
 }
 
 @test "01 copy walkthrough example files" {
   copy_walkthrough_examples
 
-  run test -f "$XRT_REPO_ROOT/test/01-pre-pr.bats"
+  run test -f "$XRT_APP_ROOT/test/01-pre-pr.bats"
   assert_success
-  run test -f "$XRT_REPO_ROOT/test/integration/02-ui-baseline-setup.bats"
+  run test -f "$XRT_APP_ROOT/test/integration/02-ui-baseline-setup.bats"
   assert_success
-  run test -f "$XRT_REPO_ROOT/test/integration/03-ui-tests-from-baseline.bats"
+  run test -f "$XRT_APP_ROOT/test/integration/03-ui-tests-from-baseline.bats"
   assert_success
-  run test -f "$XRT_REPO_ROOT/test/integration/04-ui-baseline-cleanup.bats"
+  run test -f "$XRT_APP_ROOT/test/integration/04-ui-baseline-cleanup.bats"
   assert_success
 }
 
 @test "02 run copied pre-PR check" {
-  run run_repo_bats test/01-pre-pr.bats
+  run run_app_bats test/01-pre-pr.bats
 
   assert_success
 }
 
-@test "03 run copied baseline setup" {
-  run run_repo_bats test/integration/02-ui-baseline-setup.bats
+@test "03 run copied integration folder" {
+  run run_app_bats test/integration
 
   assert_success
-  run test -s "$XRT_REPO_ROOT/.xrt-state/baseline-iphone-udid"
+  run test ! -e "$XRT_APP_ROOT/.xrt-state/baseline-iphone-udid"
   assert_success
   run grep -F "simctl create Bats App Baseline iPhone iPhone 17" "$XRT_XCRUN_LOG"
   assert_success
-}
-
-@test "04 run copied UI tests from baseline" {
-  run run_repo_bats test/integration/03-ui-tests-from-baseline.bats
-
-  assert_success
   run grep -F -- "-only-testing:UITests/UITestsLaunchTests" "$XRT_XCODEBUILD_LOG"
-  assert_success
-}
-
-@test "05 run copied cleanup" {
-  run run_repo_bats test/integration/04-ui-baseline-cleanup.bats
-
-  assert_success
-  run test ! -e "$XRT_REPO_ROOT/.xrt-state/baseline-iphone-udid"
   assert_success
   run grep -F "simctl delete CCCCCCCC-DDDD-EEEE-FFFF-000000000000" "$XRT_XCRUN_LOG"
   assert_success

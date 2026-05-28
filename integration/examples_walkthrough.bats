@@ -15,7 +15,7 @@ setup() {
   XRT_XCODEBUILD_LOG="$BATS_TEST_TMPDIR/xcodebuild-commands.log"
   export XRT_APP_ROOT XRT_MOCK_BIN XRT_SIMCTL_STATE XRT_XCRUN_LOG XRT_XCODEBUILD_LOG
 
-  mkdir -p "$XRT_APP_ROOT/tools" "$XRT_APP_ROOT/test" "$XRT_APP_ROOT/integration" "$XRT_MOCK_BIN"
+  mkdir -p "$XRT_APP_ROOT/tools" "$XRT_APP_ROOT/test/integration" "$XRT_MOCK_BIN"
   ln -s "$XRT_REPO_ROOT" "$XRT_APP_ROOT/tools/xcode-repo-tools"
   git -C "$XRT_APP_ROOT" init >/dev/null
 
@@ -96,9 +96,9 @@ EOF
 
 copy_walkthrough_examples() {
   cp "$XRT_REPO_ROOT/examples/app-pre-pr.bats" "$XRT_APP_ROOT/test/pre_pr.bats"
-  cp "$XRT_REPO_ROOT/examples/ui-baseline-setup.bats" "$XRT_APP_ROOT/integration/ui-baseline-setup.bats"
-  cp "$XRT_REPO_ROOT/examples/ui-tests-from-baseline.bats" "$XRT_APP_ROOT/integration/ui-tests-from-baseline.bats"
-  cp "$XRT_REPO_ROOT/examples/ui-baseline-cleanup.bats" "$XRT_APP_ROOT/integration/ui-baseline-cleanup.bats"
+  cp "$XRT_REPO_ROOT/examples/ui-baseline-setup.bats" "$XRT_APP_ROOT/test/integration/ui-baseline-setup.bats"
+  cp "$XRT_REPO_ROOT/examples/ui-tests-from-baseline.bats" "$XRT_APP_ROOT/test/integration/ui-tests-from-baseline.bats"
+  cp "$XRT_REPO_ROOT/examples/ui-baseline-cleanup.bats" "$XRT_APP_ROOT/test/integration/ui-baseline-cleanup.bats"
 }
 
 run_app_bats() {
@@ -117,17 +117,17 @@ run_app_bats() {
   run run_app_bats test/pre_pr.bats
   assert_success
 
-  run run_app_bats integration/ui-baseline-setup.bats
+  run run_app_bats test/integration/ui-baseline-setup.bats
   assert_success
   run test -s "$XRT_APP_ROOT/.xrt-state/baseline-iphone-udid"
   assert_success
 
-  run run_app_bats integration/ui-tests-from-baseline.bats
+  run run_app_bats test/integration/ui-tests-from-baseline.bats
   assert_success
   run grep -F -- "-only-testing:UITests/UITestsLaunchTests" "$XRT_XCODEBUILD_LOG"
   assert_success
 
-  run run_app_bats integration/ui-baseline-cleanup.bats
+  run run_app_bats test/integration/ui-baseline-cleanup.bats
   assert_success
   run test ! -e "$XRT_APP_ROOT/.xrt-state/baseline-iphone-udid"
   assert_success

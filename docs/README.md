@@ -6,7 +6,7 @@ README is the entry point and project overview.
 ## Guides
 
 - [Getting started](getting-started.md)
-- [UI baseline walkthrough](walkthrough-ui-baseline.md)
+- [Walkthrough](walkthrough.md)
 - [Project architecture](architecture.md)
 - [Testing](testing.md)
 - [XTDD workflow](xtdd.md)

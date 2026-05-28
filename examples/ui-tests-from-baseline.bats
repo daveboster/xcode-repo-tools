@@ -1,9 +1,9 @@
 #!/usr/bin/env bats
 
-# Copy this file into a consuming repo's integration/ directory.
+# Copy this file into a consuming repo's test/integration/ directory.
 # It assumes examples/ui-baseline-setup.bats has created the baseline image.
 
-XRT_APP_ROOT="${XRT_APP_ROOT:-$BATS_TEST_DIRNAME/..}"
+XRT_APP_ROOT="${XRT_APP_ROOT:-$BATS_TEST_DIRNAME/../..}"
 XRT_TOOLS_DIR="${XRT_TOOLS_DIR:-$XRT_APP_ROOT/tools/xcode-repo-tools}"
 XRT_BASELINE_STATE_DIR="${XRT_BASELINE_STATE_DIR:-$XRT_APP_ROOT/.xrt-state}"
 XRT_UI_TEST_PROJECT="${XRT_UI_TEST_PROJECT:-YourApp.xcodeproj}"

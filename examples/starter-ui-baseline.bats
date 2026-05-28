@@ -1,9 +1,9 @@
 #!/usr/bin/env bats
 
-# Copy this file into a consuming repo's integration/ directory, then update
+# Copy this file into a consuming repo's test/integration/ directory, then update
 # XRT_TOOLS_DIR if the submodule is installed somewhere else.
 
-XRT_APP_ROOT="${XRT_APP_ROOT:-$BATS_TEST_DIRNAME/..}"
+XRT_APP_ROOT="${XRT_APP_ROOT:-$BATS_TEST_DIRNAME/../..}"
 if [[ -z "${XRT_TOOLS_DIR:-}" ]]; then
   if [[ -d "$XRT_APP_ROOT/tools/xcode-repo-tools" ]]; then
     XRT_TOOLS_DIR="$XRT_APP_ROOT/tools/xcode-repo-tools"

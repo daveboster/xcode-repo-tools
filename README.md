@@ -60,7 +60,7 @@ selector variables.
 
 - [Getting started](docs/getting-started.md): add this repo as a submodule and
   load helpers from an app repo.
-- [UI baseline walkthrough](docs/walkthrough-ui-baseline.md): copy starter
+- [Walkthrough](docs/walkthrough.md): copy starter
   Bats files, create a baseline simulator, run UI tests, and clean up.
 - [Project architecture](docs/architecture.md): understand the two-layer
   design and why Bats is used differently in each layer.

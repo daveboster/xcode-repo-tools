@@ -50,7 +50,8 @@ common simulator and `xcodebuild` behavior to this repo.
 Copy the starter scenario into your app repo:
 
 ```bash
-cp tools/xcode-repo-tools/examples/starter-ui-baseline.bats integration/ui-baseline.bats
+mkdir -p test/integration
+cp tools/xcode-repo-tools/examples/starter-ui-baseline.bats test/integration/ui-baseline.bats
 ```
 
 Update these values in the copied file:
@@ -68,14 +69,13 @@ Run it from the app repo with credentials loaded into the shell:
 ```bash
 TEST_USERNAME="your-test-account@example.com" \
 TEST_PASSWORD="your-test-password" \
-bats integration/ui-baseline.bats
+bats test/integration/ui-baseline.bats
 ```
 
 ## Walkthrough
 
-After the submodule is installed, follow the
-[first UI baseline walkthrough](walkthrough-ui-baseline.md) to copy starter
-Bats files into your app repo, create a reusable iPhone baseline simulator, run
-UI tests from that baseline, and clean up the image.
+After the submodule is installed, follow the [walkthrough](walkthrough.md) to
+copy starter Bats files into your app repo, create a reusable iPhone baseline
+simulator, run UI tests from that baseline, and clean up the image.
 
 See [Testing](testing.md) for local credential and VS Code task setup.

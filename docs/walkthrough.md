@@ -100,6 +100,12 @@ cp tools/xcode-repo-tools/examples/03-ui-tests-from-baseline.bats test/integrati
 cp tools/xcode-repo-tools/examples/04-ui-baseline-cleanup.bats test/integration/04-ui-baseline-cleanup.bats
 ```
 
+## TLDR: run the starter checks
+
+```bash
+tools/xcode-repo-tools/test/bats/bin/bats test/01-pre-pr.bats test/integration
+```
+
 ## Run setup image
 
 ```bash
@@ -119,3 +125,7 @@ tools/xcode-repo-tools/test/bats/bin/bats test/integration/03-ui-tests-from-base
 ```bash
 tools/xcode-repo-tools/test/bats/bin/bats test/integration/04-ui-baseline-cleanup.bats
 ```
+
+This repo ignores `test/integration/` so copied walkthrough files do not get
+committed by accident. Move or rename them when you are ready to keep them as
+part of your app repo's permanent test suite.

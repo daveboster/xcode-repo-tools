@@ -1,3 +1,4 @@
 .DS_Store
 xcuserdata/
 .xrt-state/
+test/integration/

@@ -2,6 +2,18 @@
 
 Use this guide to add `xcode-repo-tools` to an existing Xcode or iOS app repo.
 
+## Check Bats
+
+Make sure Bats is available before adding tests:
+
+```bash
+command -v bats || test -x tools/xcode-repo-tools/test/bats/bin/bats
+```
+
+If Bats is not available, follow the
+[Bats tutorial](https://bats-core.readthedocs.io/en/stable/tutorial.html) or
+initialize this repo's submodules after adding `xcode-repo-tools`.
+
 ## Add the submodule
 
 ```bash
@@ -58,5 +70,12 @@ TEST_USERNAME="your-test-account@example.com" \
 TEST_PASSWORD="your-test-password" \
 bats integration/ui-baseline.bats
 ```
+
+## Walkthrough
+
+After the submodule is installed, follow the
+[first UI baseline walkthrough](walkthrough-ui-baseline.md) to copy starter
+Bats files into your app repo, create a reusable iPhone baseline simulator, run
+UI tests from that baseline, and clean up the image.
 
 See [Testing](testing.md) for local credential and VS Code task setup.

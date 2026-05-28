@@ -76,18 +76,22 @@ Copy the starter scenario into your app repo:
 
 ```bash
 mkdir -p test/integration
+cp tools/xcode-repo-tools/examples/xrt-example-config.bash test/xrt-example-config.bash
 cp tools/xcode-repo-tools/examples/starter-ui-baseline.bats test/integration/ui-baseline.bats
 ```
 
-Update these values in the copied file:
+Update these values in `test/xrt-example-config.bash` as needed:
 
 - `XRT_TOOLS_DIR`: submodule path, defaults to `tools/xcode-repo-tools`.
 - `XRT_BASELINE_SIM_NAME`: reusable baseline simulator name.
-- `XRT_UI_TEST_PROJECT`: app Xcode project path.
-- `XRT_UI_TEST_SCHEME`: app UI test scheme.
-- `XRT_UI_TEST_LOGIN_SELECTOR`: non-parallel test that primes the baseline.
-- `XRT_UI_TEST_SMOKE_SELECTOR`: parallel-safe test selector that validates
+- `XRT_UI_TEST_PROJECT`: bundled fixture project used to prime the baseline.
+- `XRT_UI_TEST_SCHEME`: bundled fixture UI test scheme.
+- `XRT_UI_TEST_ICLOUD_SETUP_SELECTOR`: non-parallel test that primes the baseline.
+- `XRT_UI_TEST_SMOKE_SELECTOR`: bundled fixture smoke selector that validates
   baseline reuse.
+- `XRT_PROJECT_UI_TEST_PROJECT`: your app's main UI test project.
+- `XRT_PROJECT_UI_TEST_SCHEME`: your app's main UI test scheme.
+- `XRT_PROJECT_UI_TEST_SMOKE_SELECTOR`: your app's parallel-safe smoke selector.
 
 Run it from the app repo with credentials loaded into the shell:
 

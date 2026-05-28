@@ -2,8 +2,7 @@
 
 # Copy this file into a consuming repo's test/ directory.
 
-XRT_APP_ROOT="${XRT_APP_ROOT:-$BATS_TEST_DIRNAME/..}"
-XRT_TOOLS_DIR="${XRT_TOOLS_DIR:-$XRT_APP_ROOT/tools/xcode-repo-tools}"
+source "$BATS_TEST_DIRNAME/xrt-example-config.bash"
 
 load "$XRT_TOOLS_DIR/test/helpers/bats_setup"
 

@@ -3,12 +3,7 @@
 # Copy this file into a consuming repo's test/integration/ directory.
 # It assumes examples/02-ui-baseline-setup.bats has created the baseline image.
 
-XRT_APP_ROOT="${XRT_APP_ROOT:-$BATS_TEST_DIRNAME/../..}"
-XRT_TOOLS_DIR="${XRT_TOOLS_DIR:-$XRT_APP_ROOT/tools/xcode-repo-tools}"
-XRT_BASELINE_STATE_DIR="${XRT_BASELINE_STATE_DIR:-$XRT_APP_ROOT/.xrt-state}"
-XRT_UI_TEST_PROJECT="${XRT_UI_TEST_PROJECT:-$XRT_TOOLS_DIR/src/UITests/UITests.xcodeproj}"
-XRT_UI_TEST_SCHEME="${XRT_UI_TEST_SCHEME:-UITests}"
-XRT_UI_TEST_SMOKE_SELECTOR="${XRT_UI_TEST_SMOKE_SELECTOR:-UITests/UITestsLaunchTests}"
+source "$BATS_TEST_DIRNAME/../xrt-example-config.bash"
 
 load "$XRT_TOOLS_DIR/test/helpers/bats_setup"
 
@@ -38,13 +33,25 @@ baseline_udid() {
   assert_success
 }
 
+# Enable this test after setting your app's project and scheme values.
+# @test "app UI smoke tests can run from baseline" {
+#   run xrt_xcodebuild_run_ui_tests \
+#     "$XRT_PROJECT_UI_TEST_PROJECT" \
+#     "$XRT_PROJECT_UI_TEST_SCHEME" \
+#     "$(baseline_udid)" \
+#     "$XRT_PROJECT_UI_TEST_SMOKE_SELECTOR" \
+#     "normal"
+#
+#   assert_success
+# }
+
 # Enable this test after setting a targeted selector for your app.
 # @test "targeted app UI test can run from baseline" {
 #   run xrt_xcodebuild_run_ui_tests \
-#     "$XRT_UI_TEST_PROJECT" \
-#     "$XRT_UI_TEST_SCHEME" \
+#     "$XRT_PROJECT_UI_TEST_PROJECT" \
+#     "$XRT_PROJECT_UI_TEST_SCHEME" \
 #     "$(baseline_udid)" \
-#     "${XRT_UI_TEST_TARGET_SELECTOR:?Set XRT_UI_TEST_TARGET_SELECTOR}" \
+#     "${XRT_PROJECT_UI_TEST_TARGET_SELECTOR:?Set XRT_PROJECT_UI_TEST_TARGET_SELECTOR}" \
 #     "normal"
 #
 #   assert_success

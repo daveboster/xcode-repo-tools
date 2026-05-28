@@ -3,10 +3,7 @@
 # Copy this file into a consuming repo's test/integration/ directory.
 # It creates or recreates a reusable iPhone baseline simulator.
 
-XRT_APP_ROOT="${XRT_APP_ROOT:-$BATS_TEST_DIRNAME/../..}"
-XRT_TOOLS_DIR="${XRT_TOOLS_DIR:-$XRT_APP_ROOT/tools/xcode-repo-tools}"
-XRT_BASELINE_SIM_NAME="${XRT_BASELINE_SIM_NAME:-Bats App Baseline iPhone}"
-XRT_BASELINE_STATE_DIR="${XRT_BASELINE_STATE_DIR:-$XRT_APP_ROOT/.xrt-state}"
+source "$BATS_TEST_DIRNAME/../xrt-example-config.bash"
 
 load "$XRT_TOOLS_DIR/test/helpers/bats_setup"
 
@@ -68,16 +65,16 @@ baseline_udid() {
 #   assert_success
 # }
 
-# Enable this test after setting project, scheme, and selector values for your
-# app. Run this in specific mode so the baseline simulator itself is primed.
+# Enable this test when the bundled fixture should prime the baseline simulator.
+# Run this in specific mode so the baseline simulator itself is updated.
 # @test "prime iCloud baseline in non-parallel mode" {
 #   source "$XRT_TOOLS_DIR/lib/xcodebuild.sh"
 #
 #   run xrt_xcodebuild_run_ui_tests \
-#     "${XRT_UI_TEST_PROJECT:?Set XRT_UI_TEST_PROJECT}" \
-#     "${XRT_UI_TEST_SCHEME:?Set XRT_UI_TEST_SCHEME}" \
+#     "$XRT_UI_TEST_PROJECT" \
+#     "$XRT_UI_TEST_SCHEME" \
 #     "$(baseline_udid)" \
-#     "${XRT_UI_TEST_ICLOUD_SETUP_SELECTOR:?Set XRT_UI_TEST_ICLOUD_SETUP_SELECTOR}" \
+#     "$XRT_UI_TEST_ICLOUD_SETUP_SELECTOR" \
 #     "specific"
 #
 #   assert_success

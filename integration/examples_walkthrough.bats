@@ -126,6 +126,7 @@ EOF
 copy_walkthrough_examples() {
   mkdir -p "$XRT_APP_ROOT/test/integration"
 
+  copy_walkthrough_example "$XRT_TOOLS_DIR/examples/xrt-example-config.bash" "$XRT_APP_ROOT/test/xrt-example-config.bash"
   copy_walkthrough_example "$XRT_TOOLS_DIR/examples/01-app-pre-pr.bats" "$XRT_APP_ROOT/test/01-pre-pr.bats"
   copy_walkthrough_example "$XRT_TOOLS_DIR/examples/02-ui-baseline-setup.bats" "$XRT_APP_ROOT/test/integration/02-ui-baseline-setup.bats"
   copy_walkthrough_example "$XRT_TOOLS_DIR/examples/03-ui-tests-from-baseline.bats" "$XRT_APP_ROOT/test/integration/03-ui-tests-from-baseline.bats"
@@ -156,6 +157,8 @@ run_app_bats() {
 @test "01 copy walkthrough example files" {
   copy_walkthrough_examples
 
+  run test -f "$XRT_APP_ROOT/test/xrt-example-config.bash"
+  assert_success
   run test -f "$XRT_APP_ROOT/test/01-pre-pr.bats"
   assert_success
   run test -f "$XRT_APP_ROOT/test/integration/02-ui-baseline-setup.bats"

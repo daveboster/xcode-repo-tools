@@ -29,6 +29,31 @@ git submodule add ../xcode-repo-tools tools/xcode-repo-tools
 git submodule update --init --recursive
 ```
 
+## Test a development branch
+
+To try an unreleased `xcode-repo-tools` branch from a consuming app repo, switch
+the submodule checkout to that branch:
+
+```bash
+XRT_BRANCH="dev/docs-organize-readme"
+
+git -C tools/xcode-repo-tools fetch origin
+git -C tools/xcode-repo-tools switch -C "$XRT_BRANCH" "origin/$XRT_BRANCH"
+git -C tools/xcode-repo-tools pull --ff-only
+```
+
+When you are done testing, reset the submodule checkout back to the main
+release branch:
+
+```bash
+git -C tools/xcode-repo-tools fetch origin
+git -C tools/xcode-repo-tools switch main
+git -C tools/xcode-repo-tools pull --ff-only
+```
+
+Only commit the changed submodule pointer in the consuming app repo when you
+intend to pin that repo to the selected branch commit.
+
 ## Load helpers from Bats
 
 Use the shared Bats setup helper from app repo tests:

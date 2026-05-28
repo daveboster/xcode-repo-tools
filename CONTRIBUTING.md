@@ -97,6 +97,31 @@ Xcode behavior:
 test/bats/bin/bats integration
 ```
 
+### Test a branch from a consuming app repo
+
+When a pull request needs validation from another app repo, switch that app
+repo's `xcode-repo-tools` submodule to the development branch:
+
+```bash
+XRT_BRANCH="dev/docs-organize-readme"
+
+git -C tools/xcode-repo-tools fetch origin
+git -C tools/xcode-repo-tools switch -C "$XRT_BRANCH" "origin/$XRT_BRANCH"
+git -C tools/xcode-repo-tools pull --ff-only
+```
+
+Run the consuming repo checks that exercise the change. When testing is done,
+reset the submodule checkout back to the main release branch:
+
+```bash
+git -C tools/xcode-repo-tools fetch origin
+git -C tools/xcode-repo-tools switch main
+git -C tools/xcode-repo-tools pull --ff-only
+```
+
+Do not commit the changed submodule pointer in the consuming app repo unless
+that repo should intentionally pin to the tested branch commit.
+
 Pull request expectations:
 
 - Link the relevant issue when one exists.

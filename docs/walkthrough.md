@@ -7,6 +7,18 @@ It copies starter Bats files into the app repo, creates a reusable iPhone
 baseline simulator, runs UI tests from that baseline, and then cleans up the
 baseline image.
 
+## TLDR: run the starter checks
+
+Run the walkthrough driver to copy missing example files, run the pre-PR check,
+and run the copied integration folder:
+
+```bash
+tools/xcode-repo-tools/test/bats/bin/bats tools/xcode-repo-tools/integration/examples_walkthrough.bats
+```
+
+The copy step leaves existing files alone so you can rerun the command after
+editing the copied examples.
+
 ## 1. Add a first pre-PR check
 
 Create the app repo test directory and copy the
@@ -99,18 +111,6 @@ cp tools/xcode-repo-tools/examples/02-ui-baseline-setup.bats test/integration/02
 cp tools/xcode-repo-tools/examples/03-ui-tests-from-baseline.bats test/integration/03-ui-tests-from-baseline.bats
 cp tools/xcode-repo-tools/examples/04-ui-baseline-cleanup.bats test/integration/04-ui-baseline-cleanup.bats
 ```
-
-## TLDR: run the starter checks
-
-Run the walkthrough driver to copy missing example files, run the pre-PR check,
-and run the copied integration folder:
-
-```bash
-tools/xcode-repo-tools/test/bats/bin/bats tools/xcode-repo-tools/integration/examples_walkthrough.bats
-```
-
-The copy step leaves existing files alone so you can rerun the command after
-editing the copied examples.
 
 ## Run setup image
 

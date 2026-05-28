@@ -27,7 +27,9 @@ tools/xcode-repo-tools/test/bats/bin/bats test/01-pre-pr.bats test/integration
 ```
 
 The copy step leaves existing files alone so you can rerun the command after
-editing the copied examples.
+editing the copied examples. When this command runs from a consuming app repo,
+the copied files stay in that app repo. Cleanup of copied files only happens
+when `xcode-repo-tools` runs its own self-test.
 
 ## 1. Add a first pre-PR check
 

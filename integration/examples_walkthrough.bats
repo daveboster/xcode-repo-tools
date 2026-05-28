@@ -11,7 +11,11 @@ setup_file() {
   XRT_XCRUN_LOG="$BATS_FILE_TMPDIR/xcrun-commands.log"
   XRT_XCODEBUILD_LOG="$BATS_FILE_TMPDIR/xcodebuild-commands.log"
   XRT_COPIED_FILES="$BATS_FILE_TMPDIR/copied-files.txt"
-  export XRT_REPO_ROOT XRT_TOOLS_DIR XRT_APP_ROOT XRT_MOCK_BIN XRT_SIMCTL_STATE XRT_XCRUN_LOG XRT_XCODEBUILD_LOG XRT_COPIED_FILES
+  XRT_SELF_TEST_MODE=false
+  if [[ "$XRT_APP_ROOT" == "$XRT_TOOLS_DIR" ]]; then
+    XRT_SELF_TEST_MODE=true
+  fi
+  export XRT_REPO_ROOT XRT_TOOLS_DIR XRT_APP_ROOT XRT_MOCK_BIN XRT_SIMCTL_STATE XRT_XCRUN_LOG XRT_XCODEBUILD_LOG XRT_COPIED_FILES XRT_SELF_TEST_MODE
 
   mkdir -p "$XRT_MOCK_BIN"
   : >"$XRT_COPIED_FILES"
@@ -37,6 +41,10 @@ default_app_root() {
 }
 
 teardown_file() {
+  if [[ "$XRT_SELF_TEST_MODE" != true ]]; then
+    return 0
+  fi
+
   if [[ -f "$XRT_COPIED_FILES" ]]; then
     while IFS= read -r copied_file; do
       rm -f "$copied_file"
@@ -47,7 +55,7 @@ teardown_file() {
 }
 
 setup() {
-  export XRT_TOOLS_DIR XRT_APP_ROOT XRT_MOCK_BIN XRT_SIMCTL_STATE XRT_XCRUN_LOG XRT_XCODEBUILD_LOG XRT_COPIED_FILES
+  export XRT_TOOLS_DIR XRT_APP_ROOT XRT_MOCK_BIN XRT_SIMCTL_STATE XRT_XCRUN_LOG XRT_XCODEBUILD_LOG XRT_COPIED_FILES XRT_SELF_TEST_MODE
 }
 
 create_mock_xcrun() {
